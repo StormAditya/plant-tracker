@@ -3,7 +3,7 @@ import { Leaf } from 'lucide-react';
 
 export default function Header() {
   return (
-    <header className="glass-panel" style={{ margin: '1rem 1.5rem', padding: '1rem 1.5rem', borderRadius: '20px' }}>
+    <header className="glass-panel" style={{ width: '100%', maxWidth: '1400px', margin: '1rem auto 1.5rem auto', padding: '1rem 1.5rem', borderRadius: '20px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         
         {/* Brand Logo */}

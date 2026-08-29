@@ -96,18 +96,18 @@ export default function App() {
   });
 
   return (
-    <div style={{ minHeight: '100vh', paddingBottom: '3rem' }}>
+    <div style={{ minHeight: '100vh', padding: '0 1.5rem 3rem 1.5rem' }}>
       
       {/* Minimalist Header */}
       <Header />
 
-      {/* Main Container */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem' }}>
+      {/* Main Container - Full Width Alignment */}
+      <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Search & Action Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           
-          <div style={{ position: 'relative', width: '100%', maxWidth: '420px' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '280px', maxWidth: '600px' }}>
             <Search size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
@@ -176,7 +176,7 @@ export default function App() {
           </div>
         ) : (
           /* Plant Cards Grid */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1.5rem' }}>
             {filteredPlants.map((plant) => (
               <PlantCard
                 key={plant.id}
