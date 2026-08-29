@@ -1,10 +1,10 @@
 import React from 'react';
-import { Leaf, Zap, Smartphone, Database, Plus } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
-export default function Header({ onOpenUpload, activeTab, setActiveTab, plantCount }) {
+export default function Header() {
   return (
     <header className="glass-panel" style={{ margin: '1rem 1.5rem', padding: '1rem 1.5rem', borderRadius: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         
         {/* Brand Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -28,34 +28,6 @@ export default function Header({ onOpenUpload, activeTab, setActiveTab, plantCou
               AI Plant Identifier & Height Growth Tracker
             </p>
           </div>
-        </div>
-
-        {/* Feature Highlights Badges */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-          <span className="badge badge-480p">
-            <Zap size={12} /> Auto 480p Compression
-          </span>
-          <span className="badge badge-emerald">
-            <Database size={12} /> Max Free Storage API
-          </span>
-          <span className="badge badge-gold">
-            <Smartphone size={12} /> App Plug-in Ready
-          </span>
-        </div>
-
-        {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <button 
-            className={`btn-secondary ${activeTab === 'api-docs' ? 'active' : ''}`}
-            onClick={() => setActiveTab(activeTab === 'api-docs' ? 'gallery' : 'api-docs')}
-            style={{ fontSize: '0.85rem' }}
-          >
-            <Smartphone size={16} /> Mobile API Specs
-          </button>
-          
-          <button className="btn-primary" onClick={onOpenUpload}>
-            <Plus size={18} /> Identify & Add Plant
-          </button>
         </div>
 
       </div>
