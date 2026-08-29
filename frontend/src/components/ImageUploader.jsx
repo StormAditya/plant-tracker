@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, Sparkles, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { UploadCloud, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
 import { compressImageTo480p } from '../utils/imageCompressor';
 import { plantApi } from '../api/plantApi';
 
 export default function ImageUploader({ onIdentificationComplete, onClose }) {
   const [isCompressing, setIsCompressing] = useState(false);
   const [isIdentifying, setIsIdentifying] = useState(false);
-  const [compressionStats, setCompressionStats] = useState(null);
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
@@ -19,12 +18,10 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
 
     setError(null);
     setIsCompressing(true);
-    setCompressionStats(null);
 
     try {
       // Step 1: Compress image client-side to 480p resolution standard
       const compressionResult = await compressImageTo480p(file);
-      setCompressionStats(compressionResult);
       setIsCompressing(false);
 
       // Step 2: Upload 480p compressed file to backend AI identification endpoint
@@ -32,11 +29,10 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
       const apiResponse = await plantApi.identifyPlant(compressionResult.compressedFile);
       setIsIdentifying(false);
 
-      // Step 3: Trigger user confirmation & edit modal with AI species result
+      // Step 3: Trigger user confirmation modal
       onIdentificationComplete({
         imageUrl: apiResponse.imageUrl || compressionResult.previewUrl,
-        identification: apiResponse.identification,
-        compressionStats: compressionResult
+        identification: apiResponse.identification
       });
 
     } catch (err) {
@@ -114,10 +110,10 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
               <RefreshCw size={36} color="var(--emerald-primary)" className="spin" style={{ animation: 'spin 1s linear infinite' }} />
               <div>
                 <h4 style={{ color: 'var(--emerald-light)', fontSize: '1.05rem' }}>
-                  {isCompressing ? 'Compressing Image...' : 'AI Scanning Plant Species...'}
+                  {isCompressing ? 'Processing Image...' : 'AI Scanning Plant Species...'}
                 </h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  {isCompressing ? 'Encoding to high-efficiency format' : 'Identifying leaves, scientific name & care details'}
+                  {isCompressing ? 'Preparing photo' : 'Identifying species & care details'}
                 </p>
               </div>
             </div>
@@ -146,37 +142,6 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
             </div>
           )}
         </div>
-
-        {/* Compression Statistics Feedback */}
-        {compressionStats && (
-          <div style={{
-            marginTop: '1.25rem',
-            background: 'rgba(0, 0, 0, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
-            padding: '0.85rem 1rem',
-            fontSize: '0.83rem'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--text-muted)' }}>
-              <span>Compression Status:</span>
-              <span className="badge badge-emerald"><CheckCircle2 size={12} /> 480p Ready</span>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', textAlign: 'center', marginTop: '0.5rem' }}>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.5rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', display: 'block' }}>ORIGINAL</span>
-                <strong>{compressionStats.originalSizeFormatted}</strong>
-              </div>
-              <div style={{ background: 'rgba(16,185,129,0.1)', padding: '0.5rem', borderRadius: '8px', border: '1px solid rgba(16,185,129,0.2)' }}>
-                <span style={{ fontSize: '0.7rem', color: 'var(--emerald-light)', display: 'block' }}>COMPRESSED 480P</span>
-                <strong style={{ color: 'var(--emerald-light)' }}>{compressionStats.compressedSizeFormatted}</strong>
-              </div>
-              <div style={{ background: 'rgba(59,130,246,0.1)', padding: '0.5rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.7rem', color: '#60a5fa', display: 'block' }}>SAVINGS</span>
-                <strong style={{ color: '#60a5fa' }}>{compressionStats.savingsPercent}% Smaller</strong>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Error alert */}
         {error && (
