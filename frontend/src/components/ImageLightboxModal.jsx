@@ -20,74 +20,87 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
         justifyContent: 'center'
       }}
     >
-      {/* Top Header Bar: Title on Far Left, Close Button on Far Right */}
+      {/* Container Wrapper ensuring 100% Full Width Push */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '92vw',
+          maxWidth: '940px',
           display: 'flex',
-          justify: 'space-between',
-          alignItems: 'center',
-          marginBottom: '0.75rem',
-          padding: '0 0.25rem'
+          flexDirection: 'column',
+          alignItems: 'center'
         }}
       >
-        {/* Plant Species Name */}
-        <h3 style={{ fontSize: '1.2rem', color: '#ffffff', fontWeight: 700, margin: 0 }}>
-          {title || 'Plant Photo'}
-        </h3>
 
-        {/* Circular Close Button on Far Right */}
-        <button
-          className="btn-secondary"
-          onClick={onClose}
+        {/* Top Header Bar: Title on 100% Far Left, Close Button on 100% Far Right */}
+        <div
           style={{
-            width: '40px',
-            height: '40px',
-            minWidth: '40px',
-            padding: 0,
-            borderRadius: '50%',
+            width: '100%',
+            display: 'flex',
+            justify: 'space-between',
+            alignItems: 'center',
+            marginBottom: '1rem',
+            padding: '0 0.5rem'
+          }}
+        >
+          {/* Plant Species Name */}
+          <h3 style={{ fontSize: '1.25rem', color: '#ffffff', fontWeight: 700, margin: 0 }}>
+            {title || 'Plant Photo'}
+          </h3>
+
+          {/* Circular Close Button on 100% Far Right */}
+          <button
+            className="btn-secondary"
+            onClick={onClose}
+            style={{
+              width: '42px',
+              height: '42px',
+              minWidth: '42px',
+              padding: 0,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(255, 255, 255, 0.14)',
+              border: '1px solid rgba(255, 255, 255, 0.25)',
+              cursor: 'pointer'
+            }}
+            title="Close full photo view"
+          >
+            <X size={22} color="#ffffff" />
+          </button>
+        </div>
+
+        {/* Full Image Container - Accurate Uncropped Aspect Ratio */}
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            maxHeight: '82vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'rgba(255, 255, 255, 0.12)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
+            borderRadius: '18px',
+            overflow: 'hidden',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.85)',
+            border: '1px solid rgba(16, 185, 129, 0.35)',
+            background: 'rgba(0, 0, 0, 0.5)'
           }}
-          title="Close full photo view"
         >
-          <X size={20} color="#ffffff" />
-        </button>
-      </div>
+          <img
+            src={imageUrl}
+            alt={title || 'Full Resolution Plant'}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '82vh',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+              display: 'block'
+            }}
+          />
+        </div>
 
-      {/* Full Image Container - Accurate Uncropped Aspect Ratio */}
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          position: 'relative',
-          maxWidth: '92vw',
-          maxHeight: '85vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
-          border: '1px solid rgba(16, 185, 129, 0.3)'
-        }}
-      >
-        <img
-          src={imageUrl}
-          alt={title || 'Full Resolution Plant'}
-          style={{
-            maxWidth: '100%',
-            maxHeight: '85vh',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            display: 'block'
-          }}
-        />
       </div>
 
     </div>
