@@ -6,13 +6,14 @@ import PlantCard from './components/PlantCard';
 import AddHeightModal from './components/AddHeightModal';
 import PlantDetailModal from './components/PlantDetailModal';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, ArrowUpDown } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [sortBy, setSortBy] = useState('newest'); // 'newest', 'oldest', 'height-high', 'height-low', 'name'
 
   // Modals state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -97,15 +98,24 @@ export default function App() {
     }
   };
 
-  // Filtered plants
-  const filteredPlants = plants.filter((plant) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      plant.speciesName.toLowerCase().includes(q) ||
-      (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
-      (plant.notes && plant.notes.toLowerCase().includes(q))
-    );
-  });
+  // Filtered & Sorted plants
+  const sortedAndFilteredPlants = [...plants]
+    .filter((plant) => {
+      const q = searchQuery.toLowerCase();
+      return (
+        plant.speciesName.toLowerCase().includes(q) ||
+        (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
+        (plant.notes && plant.notes.toLowerCase().includes(q))
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === 'newest') return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+      if (sortBy === 'oldest') return new Date(a.updatedAt || a.createdAt) - new Date(b.updatedAt || b.createdAt);
+      if (sortBy === 'height-high') return (b.currentHeight || 0) - (a.currentHeight || 0);
+      if (sortBy === 'height-low') return (a.currentHeight || 0) - (b.currentHeight || 0);
+      if (sortBy === 'name') return a.speciesName.localeCompare(b.speciesName);
+      return 0;
+    });
 
   return (
     <div style={{ minHeight: '100vh', padding: '0 1rem 3rem 1rem' }}>
@@ -149,10 +159,11 @@ export default function App() {
       {/* Main Container */}
       <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-        {/* Search & Top Action Controls */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
+        {/* Search, Sort & Action Controls */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.75rem', flexWrap: 'wrap' }}>
           
-          <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
+          {/* Search Input */}
+          <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
             <Search size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
@@ -164,6 +175,25 @@ export default function App() {
             />
           </div>
 
+          {/* Sort Dropdown */}
+          <div style={{ position: 'relative', minWidth: '150px' }}>
+            <select
+              className="form-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{ paddingLeft: '2.2rem', fontSize: '0.88rem', height: '46px' }}
+              title="Sort Plant Collection"
+            >
+              <option value="newest">Sort: Date (Newest)</option>
+              <option value="oldest">Sort: Date (Oldest)</option>
+              <option value="height-high">Sort: Height (Tallest)</option>
+              <option value="height-low">Sort: Height (Shortest)</option>
+              <option value="name">Sort: Name (A - Z)</option>
+            </select>
+            <ArrowUpDown size={15} color="var(--emerald-light)" style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+          </div>
+
+          {/* Action Buttons */}
           <div className="top-action-bar-buttons" style={{ display: 'flex', gap: '0.75rem' }}>
             <button className="btn-secondary" onClick={loadPlants} title="Refresh plant data">
               <RefreshCw size={16} className={isLoading ? 'spin' : ''} /> Refresh
@@ -205,7 +235,7 @@ export default function App() {
             <RefreshCw size={40} color="var(--emerald-primary)" style={{ animation: 'spin 1s linear infinite' }} />
             <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>Loading plant database...</p>
           </div>
-        ) : filteredPlants.length === 0 ? (
+        ) : sortedAndFilteredPlants.length === 0 ? (
           /* Empty State */
           <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--emerald-light)', marginBottom: '1.25rem' }}>
@@ -222,7 +252,7 @@ export default function App() {
         ) : (
           /* Plant Cards Grid */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1.5rem' }}>
-            {filteredPlants.map((plant) => (
+            {sortedAndFilteredPlants.map((plant) => (
               <PlantCard
                 key={plant.id}
                 plant={plant}

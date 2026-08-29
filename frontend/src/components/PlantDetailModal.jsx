@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity, Maximize2, X } from 'lucide-react';
+import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity, Maximize2, X, ArrowUpDown } from 'lucide-react';
 import GrowthChart from './GrowthChart';
 import ImageLightboxModal from './ImageLightboxModal';
 
@@ -9,6 +9,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
   const [speciesName, setSpeciesName] = useState(plant.speciesName);
   const [scientificName, setScientificName] = useState(plant.scientificName || '');
   const [notes, setNotes] = useState(plant.notes || '');
+  const [logSortBy, setLogSortBy] = useState('date-desc'); // 'date-desc', 'date-asc', 'height-desc', 'height-asc'
 
   const handleSaveEdit = (e) => {
     e.preventDefault();
@@ -19,6 +20,15 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
     });
     setIsEditing(false);
   };
+
+  // Sorted Height History Logs
+  const sortedHistoryLogs = [...(plant.heightHistory || [])].sort((a, b) => {
+    if (logSortBy === 'date-desc') return new Date(b.loggedAt) - new Date(a.loggedAt);
+    if (logSortBy === 'date-asc') return new Date(a.loggedAt) - new Date(b.loggedAt);
+    if (logSortBy === 'height-desc') return (b.height || 0) - (a.height || 0);
+    if (logSortBy === 'height-asc') return (a.height || 0) - (b.height || 0);
+    return 0;
+  });
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -155,13 +165,33 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
           <GrowthChart history={plant.heightHistory} unit={plant.heightUnit} />
         </div>
 
-        {/* Height Growth Timeline Log List Box */}
+        {/* Height Growth Timeline Log List Box with Sort Dropdown */}
         <div>
-          <h4 style={{ fontSize: '0.95rem', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Activity size={16} color="var(--emerald-light)" /> Height History Logs
-          </h4>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <h4 style={{ fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
+              <Activity size={16} color="var(--emerald-light)" /> Height History Logs ({sortedHistoryLogs.length})
+            </h4>
+
+            {/* Log Sort Control */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <ArrowUpDown size={13} color="var(--text-dim)" />
+              <select
+                className="form-select"
+                value={logSortBy}
+                onChange={(e) => setLogSortBy(e.target.value)}
+                style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', height: '32px', minHeight: '32px', width: 'auto', background: 'rgba(0,0,0,0.5)', borderRadius: '8px' }}
+                title="Sort History Logs"
+              >
+                <option value="date-desc">Date (Newest First)</option>
+                <option value="date-asc">Date (Oldest First)</option>
+                <option value="height-desc">Height (Tallest First)</option>
+                <option value="height-asc">Height (Shortest First)</option>
+              </select>
+            </div>
+          </div>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '180px', overflowY: 'auto' }}>
-            {plant.heightHistory?.map((log, index) => (
+            {sortedHistoryLogs.map((log, index) => (
               <div key={log.id || index} style={{
                 background: 'rgba(0,0,0,0.3)',
                 border: '1px solid rgba(255,255,255,0.06)',
