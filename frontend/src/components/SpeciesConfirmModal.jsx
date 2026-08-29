@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Leaf, Check, Ruler } from 'lucide-react';
+import { plantApi } from '../api/plantApi';
 
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
   const [speciesName, setSpeciesName] = useState(data?.identification?.speciesName || 'Unknown Plant');
@@ -18,6 +19,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
     const newPlantPayload = {
       speciesName: speciesName.trim(),
       scientificName: scientificName.trim(),
+      height: parseFloat(currentHeight) || 0,
       currentHeight: parseFloat(currentHeight) || 0,
       heightUnit,
       imageUrl: data.imageUrl,
@@ -26,12 +28,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || '/api'}/plants`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPlantPayload)
-      });
-      const savedPlant = await response.json();
+      const savedPlant = await plantApi.savePlant(newPlantPayload);
       setIsSubmitting(false);
       onSaveComplete(savedPlant);
     } catch (err) {

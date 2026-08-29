@@ -102,26 +102,38 @@ export default function App() {
   // Callback when plant save completes in confirmation modal
   const handlePlantSaved = (savedPlant) => {
     setIdentificationData(null);
-    setPlants((prev) => [savedPlant, ...prev.filter((p) => p.id !== savedPlant.id)]);
+    const plantObj = savedPlant?.plant || savedPlant;
+    if (plantObj && plantObj.id) {
+      setPlants((prev) => [plantObj, ...prev.filter((p) => p.id !== plantObj.id)]);
+    }
+    loadPlants(); // Background sync to guarantee full details instantly
   };
 
   // Callback when new height log is saved
   const handleHeightLogSaved = (updatedPlant) => {
     setAddHeightPlant(null);
-    setPlants((prev) => prev.map((p) => (p.id === updatedPlant.id ? updatedPlant : p)));
-    if (selectedPlant?.id === updatedPlant.id) {
-      setSelectedPlant(updatedPlant);
+    const plantObj = updatedPlant?.plant || updatedPlant;
+    if (plantObj && plantObj.id) {
+      setPlants((prev) => prev.map((p) => (p.id === plantObj.id ? plantObj : p)));
+      if (selectedPlant?.id === plantObj.id) {
+        setSelectedPlant(plantObj);
+      }
     }
+    loadPlants(); // Background sync
   };
 
   // Callback for editing plant details
   const handleUpdatePlant = async (id, updateFields) => {
     try {
       const updated = await plantApi.updatePlant(id, updateFields);
-      setPlants((prev) => prev.map((p) => (p.id === id ? updated : p)));
-      if (selectedPlant?.id === id) {
-        setSelectedPlant(updated);
+      const plantObj = updated?.plant || updated;
+      if (plantObj && plantObj.id) {
+        setPlants((prev) => prev.map((p) => (p.id === id ? plantObj : p)));
+        if (selectedPlant?.id === id) {
+          setSelectedPlant(plantObj);
+        }
       }
+      loadPlants();
     } catch (err) {
       alert('Failed to update plant details');
     }
@@ -145,14 +157,14 @@ export default function App() {
       const q = searchQuery.toLowerCase().trim();
       if (q) {
         const matchesText =
-          plant.speciesName.toLowerCase().includes(q) ||
+          (plant.speciesName && plant.speciesName.toLowerCase().includes(q)) ||
           (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
           (plant.notes && plant.notes.toLowerCase().includes(q));
         if (!matchesText) return false;
       }
 
       const currentH = parseFloat(plant.currentHeight) || 0;
-      const plantDate = new Date(plant.updatedAt || plant.createdAt);
+      const plantDate = new Date(plant.updatedAt || plant.createdAt || Date.now());
       plantDate.setHours(0, 0, 0, 0);
 
       // 2. Exact Height
@@ -194,11 +206,11 @@ export default function App() {
       return true;
     })
     .sort((a, b) => {
-      if (sortBy === 'newest') return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
-      if (sortBy === 'oldest') return new Date(a.updatedAt || a.createdAt) - new Date(b.updatedAt || b.createdAt);
+      if (sortBy === 'newest') return new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+      if (sortBy === 'oldest') return new Date(a.updatedAt || a.createdAt || 0) - new Date(b.updatedAt || b.createdAt || 0);
       if (sortBy === 'height-high') return (b.currentHeight || 0) - (a.currentHeight || 0);
       if (sortBy === 'height-low') return (a.currentHeight || 0) - (b.currentHeight || 0);
-      if (sortBy === 'name') return a.speciesName.localeCompare(b.speciesName);
+      if (sortBy === 'name') return (a.speciesName || '').localeCompare(b.speciesName || '');
       return 0;
     });
 
