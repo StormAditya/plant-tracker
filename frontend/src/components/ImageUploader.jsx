@@ -4,6 +4,7 @@ import { compressImageTo480p } from '../utils/imageCompressor';
 import { plantApi } from '../api/plantApi';
 
 export default function ImageUploader({ onIdentificationComplete, onClose }) {
+  const [selectedFile, setSelectedFile] = useState(null);
   const [isCompressing, setIsCompressing] = useState(false);
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [error, setError] = useState(null);
@@ -16,6 +17,7 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
       return;
     }
 
+    setSelectedFile(file);
     setError(null);
     setIsCompressing(true);
 
@@ -36,10 +38,18 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
       });
 
     } catch (err) {
-      console.error('Error during image processing:', err);
-      setError(err.message || 'Failed to process plant photo. Please try again.');
+      console.error('Error during Gemini image processing:', err);
+      setError(err.message || 'Gemini AI Identification failed. Quota or rate limit exceeded.');
       setIsCompressing(false);
       setIsIdentifying(false);
+    }
+  };
+
+  const handleRetry = () => {
+    if (selectedFile) {
+      handleFile(selectedFile);
+    } else {
+      fileInputRef.current?.click();
     }
   };
 
@@ -117,10 +127,10 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
               <RefreshCw size={36} color="var(--emerald-primary)" className="spin" style={{ animation: 'spin 1s linear infinite' }} />
               <div>
                 <h4 style={{ color: 'var(--emerald-light)', fontSize: '1.05rem' }}>
-                  {isCompressing ? 'Processing Image...' : 'AI Scanning Plant Species...'}
+                  {isCompressing ? 'Processing Image...' : 'Google Gemini AI Scanning Species...'}
                 </h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  {isCompressing ? 'Preparing photo' : 'Identifying species & care details'}
+                  {isCompressing ? 'Preparing photo' : 'Identifying botanical species & care details'}
                 </p>
               </div>
             </div>
@@ -150,21 +160,32 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
           )}
         </div>
 
-        {/* Error alert */}
+        {/* Gemini Error Alert Box with Retry Button */}
         {error && (
           <div style={{
-            marginTop: '1rem',
+            marginTop: '1.25rem',
             background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: '10px',
-            padding: '0.75rem 1rem',
+            border: '1px solid rgba(239, 68, 68, 0.35)',
+            borderRadius: '14px',
+            padding: '1rem 1.25rem',
             color: '#fca5a5',
-            fontSize: '0.85rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
+            fontSize: '0.88rem'
           }}>
-            <AlertCircle size={16} /> {error}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+              <AlertCircle size={20} color="#ef4444" />
+              <strong style={{ color: '#ffffff' }}>Gemini AI Identification Error</strong>
+            </div>
+            <p style={{ margin: '0 0 0.85rem 0', color: '#fecaca', fontSize: '0.83rem', lineHeight: 1.4 }}>
+              {error}
+            </p>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleRetry}
+              style={{ width: '100%', justifyContent: 'center', padding: '0.6rem 1rem', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <RefreshCw size={16} /> Retry Identification with Gemini AI
+            </button>
           </div>
         )}
 
