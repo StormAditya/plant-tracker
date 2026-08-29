@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
+import { UploadCloud, Sparkles, AlertCircle, RefreshCw, X } from 'lucide-react';
 import { compressImageTo480p } from '../utils/imageCompressor';
 import { plantApi } from '../api/plantApi';
 
@@ -76,7 +76,14 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
               Upload or snap a plant photo for instant AI species detection.
             </p>
           </div>
-          <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
+          <button
+            className="btn-secondary"
+            onClick={onClose}
+            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Close Modal"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Drag & Drop Upload Zone */}

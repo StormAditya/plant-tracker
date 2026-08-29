@@ -48,7 +48,7 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
             {title || 'Plant Photo'}
           </h3>
 
-          {/* Circular Close Button pushed 100% to Far Right with margin-left: auto */}
+          {/* Squircle Close Button pushed 100% to Far Right */}
           <button
             className="btn-secondary"
             onClick={onClose}
@@ -58,7 +58,7 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
               minWidth: '42px',
               marginLeft: 'auto',
               padding: 0,
-              borderRadius: '50%',
+              borderRadius: '14px', /* Squircle Shape */
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

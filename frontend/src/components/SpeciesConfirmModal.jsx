@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Check, Ruler } from 'lucide-react';
+import { Leaf, Check, Ruler, X } from 'lucide-react';
 
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
   const [speciesName, setSpeciesName] = useState(data?.identification?.speciesName || 'Unknown Plant');
@@ -55,7 +55,14 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
               Verify identified species and initial height measurement.
             </p>
           </div>
-          <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
+          <button
+            className="btn-secondary"
+            onClick={onClose}
+            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Close Modal"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Clean Plant Photo Preview */}

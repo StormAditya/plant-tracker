@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity, Maximize2 } from 'lucide-react';
+import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity, Maximize2, X } from 'lucide-react';
 import GrowthChart from './GrowthChart';
 import ImageLightboxModal from './ImageLightboxModal';
 
@@ -24,15 +24,15 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
         
-        {/* Header Bar - Safe Top Breathing Room */}
+        {/* Header Bar - Squircle Close Button */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '0.85rem' }}>
           <button
             className="btn-secondary"
             onClick={onClose}
-            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             title="Close Modal"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 

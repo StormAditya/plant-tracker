@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ruler, Plus, Calendar, AlertCircle } from 'lucide-react';
+import { Ruler, Plus, Calendar, AlertCircle, X } from 'lucide-react';
 import { plantApi } from '../api/plantApi';
 
 export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
@@ -49,7 +49,14 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
               Record new height measurement for <strong>{plant.speciesName}</strong>
             </p>
           </div>
-          <button className="btn-secondary" onClick={onClose} style={{ padding: '0.35rem 0.75rem' }}>✕</button>
+          <button
+            className="btn-secondary"
+            onClick={onClose}
+            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Close Modal"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Form */}
