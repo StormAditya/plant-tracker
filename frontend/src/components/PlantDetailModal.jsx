@@ -21,8 +21,10 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
   };
 
   const handleDelete = () => {
-    onDelete(plant.id);
-    onClose();
+    if (window.confirm(`Are you sure you want to delete "${plant.speciesName}" from your collection? This action cannot be undone.`)) {
+      onDelete(plant.id);
+      onClose();
+    }
   };
 
   return (
@@ -172,7 +174,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
           <GrowthChart history={plant.heightHistory} unit={plant.heightUnit} />
         </div>
 
-        {/* Height Growth Timeline Log List Box (Clean Header without sorting) */}
+        {/* Height Growth Timeline Log List Box */}
         <div>
           <h4 style={{ fontSize: '0.95rem', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Activity size={16} color="var(--emerald-light)" /> Height History Logs ({plant.heightHistory?.length || 0})
