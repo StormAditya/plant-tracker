@@ -5,15 +5,27 @@ import SpeciesConfirmModal from './components/SpeciesConfirmModal';
 import PlantCard from './components/PlantCard';
 import AddHeightModal from './components/AddHeightModal';
 import PlantDetailModal from './components/PlantDetailModal';
+import FilterModal from './components/FilterModal';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, ArrowUpDown } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, ArrowUpDown, Filter, X } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [sortBy, setSortBy] = useState('newest'); // 'newest', 'oldest', 'height-high', 'height-low', 'name'
+  const [sortBy, setSortBy] = useState('newest');
+
+  // Advanced Filter State
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    filterExactHeight: '',
+    filterMinHeight: '',
+    filterMaxHeight: '',
+    filterExactDate: '',
+    filterBeforeDate: '',
+    filterAfterDate: ''
+  });
 
   // Modals state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -51,6 +63,31 @@ export default function App() {
       setIsLoading(false);
     }
   };
+
+  const handleUpdateFilter = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      filterExactHeight: '',
+      filterMinHeight: '',
+      filterMaxHeight: '',
+      filterExactDate: '',
+      filterBeforeDate: '',
+      filterAfterDate: ''
+    });
+  };
+
+  // Count active filters
+  const activeFilterCount = [
+    filters.filterExactHeight,
+    filters.filterMinHeight,
+    filters.filterMaxHeight,
+    filters.filterExactDate,
+    filters.filterBeforeDate,
+    filters.filterAfterDate
+  ].filter(Boolean).length;
 
   // Callback when 480p image compression & AI identification finish
   const handleIdentificationComplete = (data) => {
@@ -101,12 +138,57 @@ export default function App() {
   // Filtered & Sorted plants
   const sortedAndFilteredPlants = [...plants]
     .filter((plant) => {
-      const q = searchQuery.toLowerCase();
-      return (
-        plant.speciesName.toLowerCase().includes(q) ||
-        (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
-        (plant.notes && plant.notes.toLowerCase().includes(q))
-      );
+      // 1. Text Search Query
+      const q = searchQuery.toLowerCase().trim();
+      if (q) {
+        const matchesText =
+          plant.speciesName.toLowerCase().includes(q) ||
+          (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
+          (plant.notes && plant.notes.toLowerCase().includes(q));
+        if (!matchesText) return false;
+      }
+
+      const currentH = parseFloat(plant.currentHeight) || 0;
+      const plantDate = new Date(plant.updatedAt || plant.createdAt);
+      plantDate.setHours(0, 0, 0, 0);
+
+      // 2. Exact Height
+      if (filters.filterExactHeight !== '' && !isNaN(parseFloat(filters.filterExactHeight))) {
+        if (Math.abs(currentH - parseFloat(filters.filterExactHeight)) > 0.1) return false;
+      }
+
+      // 3. Min Height (Larger than)
+      if (filters.filterMinHeight !== '' && !isNaN(parseFloat(filters.filterMinHeight))) {
+        if (currentH < parseFloat(filters.filterMinHeight)) return false;
+      }
+
+      // 4. Max Height (Smaller than)
+      if (filters.filterMaxHeight !== '' && !isNaN(parseFloat(filters.filterMaxHeight))) {
+        if (currentH > parseFloat(filters.filterMaxHeight)) return false;
+      }
+
+      // 5. Exact Date
+      if (filters.filterExactDate) {
+        const targetDate = new Date(filters.filterExactDate);
+        targetDate.setHours(0, 0, 0, 0);
+        if (plantDate.getTime() !== targetDate.getTime()) return false;
+      }
+
+      // 6. Before Date (To)
+      if (filters.filterBeforeDate) {
+        const beforeDate = new Date(filters.filterBeforeDate);
+        beforeDate.setHours(23, 59, 59, 999);
+        if (plantDate.getTime() > beforeDate.getTime()) return false;
+      }
+
+      // 7. After Date (From)
+      if (filters.filterAfterDate) {
+        const afterDate = new Date(filters.filterAfterDate);
+        afterDate.setHours(0, 0, 0, 0);
+        if (plantDate.getTime() < afterDate.getTime()) return false;
+      }
+
+      return true;
     })
     .sort((a, b) => {
       if (sortBy === 'newest') return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
@@ -159,10 +241,10 @@ export default function App() {
       {/* Main Container */}
       <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-        {/* Search, Sort & Action Controls */}
+        {/* Search, Filter & Sort Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.75rem', flexWrap: 'wrap' }}>
           
-          {/* Search Input */}
+          {/* Text Search Input */}
           <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
             <Search size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
             <input
@@ -174,6 +256,33 @@ export default function App() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+
+          {/* Advanced Filter Button */}
+          <button
+            className="btn-secondary"
+            onClick={() => setIsFilterOpen(true)}
+            style={{ position: 'relative', height: '46px', border: activeFilterCount > 0 ? '1px solid var(--emerald-primary)' : undefined }}
+            title="Open Advanced Filters"
+          >
+            <Filter size={16} color={activeFilterCount > 0 ? 'var(--emerald-light)' : 'currentColor'} /> Filters
+            {activeFilterCount > 0 && (
+              <span style={{
+                background: 'var(--emerald-primary)',
+                color: '#04120a',
+                fontSize: '0.7rem',
+                fontWeight: 800,
+                borderRadius: '50%',
+                width: '18px',
+                height: '18px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: '0.2rem'
+              }}>
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
 
           {/* Sort Dropdown */}
           <div style={{ position: 'relative', minWidth: '150px' }}>
@@ -204,6 +313,57 @@ export default function App() {
           </div>
 
         </div>
+
+        {/* Active Filters Summary Chips */}
+        {activeFilterCount > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Active Filters:</span>
+            
+            {filters.filterExactHeight && (
+              <span className="badge badge-emerald">
+                Height: {filters.filterExactHeight} cm
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterExactHeight', '')} />
+              </span>
+            )}
+            {filters.filterMinHeight && (
+              <span className="badge badge-emerald">
+                Height &gt; {filters.filterMinHeight} cm
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterMinHeight', '')} />
+              </span>
+            )}
+            {filters.filterMaxHeight && (
+              <span className="badge badge-emerald">
+                Height &lt; {filters.filterMaxHeight} cm
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterMaxHeight', '')} />
+              </span>
+            )}
+            {filters.filterExactDate && (
+              <span className="badge badge-emerald">
+                Date: {filters.filterExactDate}
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterExactDate', '')} />
+              </span>
+            )}
+            {filters.filterAfterDate && (
+              <span className="badge badge-emerald">
+                After: {filters.filterAfterDate}
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterAfterDate', '')} />
+              </span>
+            )}
+            {filters.filterBeforeDate && (
+              <span className="badge badge-emerald">
+                Before: {filters.filterBeforeDate}
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '0.2rem' }} onClick={() => handleUpdateFilter('filterBeforeDate', '')} />
+              </span>
+            )}
+
+            <button
+              onClick={handleResetFilters}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Clear All
+            </button>
+          </div>
+        )}
 
         {/* Backend Connection Error Alert */}
         {error && (
@@ -241,13 +401,23 @@ export default function App() {
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--emerald-light)', marginBottom: '1.25rem' }}>
               <Leaf size={32} />
             </div>
-            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>No Plants Saved Yet</h3>
+            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>
+              {activeFilterCount > 0 ? 'No Plants Match Filters' : 'No Plants Saved Yet'}
+            </h3>
             <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
-              Upload a plant photo to automatically identify species, confirm predictions, and start logging plant height over time!
+              {activeFilterCount > 0
+                ? 'Try resetting date and height filters or adjusting search keywords.'
+                : 'Upload a plant photo to automatically identify species, confirm predictions, and start logging plant height over time!'}
             </p>
-            <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
-              <Sparkles size={18} /> Identify First Plant
-            </button>
+            {activeFilterCount > 0 ? (
+              <button className="btn-secondary" onClick={handleResetFilters}>
+                Clear Active Filters
+              </button>
+            ) : (
+              <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
+                <Sparkles size={18} /> Identify First Plant
+              </button>
+            )}
           </div>
         ) : (
           /* Plant Cards Grid */
@@ -287,6 +457,15 @@ export default function App() {
       </div>
 
       {/* Modals */}
+      {isFilterOpen && (
+        <FilterModal
+          filters={filters}
+          onUpdateFilter={handleUpdateFilter}
+          onResetFilters={handleResetFilters}
+          onClose={() => setIsFilterOpen(false)}
+        />
+      )}
+
       {isUploadOpen && (
         <ImageUploader
           onIdentificationComplete={handleIdentificationComplete}
