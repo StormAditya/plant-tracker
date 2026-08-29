@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ruler, Calendar, CheckCircle2, Plus, Edit3, Trash2, Zap, Leaf, Info, Activity } from 'lucide-react';
+import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity } from 'lucide-react';
 import GrowthChart from './GrowthChart';
 
 export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, onDelete, onClose }) {
@@ -23,19 +23,11 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
         
         {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <span className="badge badge-emerald">
-              <CheckCircle2 size={12} /> Species Confirmed
-            </span>
-            <span className="badge badge-480p">
-              <Zap size={12} /> 480p Compressed
-            </span>
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1.25rem' }}>
           <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
         </div>
 
-        {/* Hero Banner with 480p image and details */}
+        {/* Hero Banner with photo and details */}
         <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
           
           <div style={{ position: 'relative', borderRadius: '18px', overflow: 'hidden', height: '220px', border: '1px solid var(--border-glow)' }}>
