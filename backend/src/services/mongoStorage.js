@@ -68,7 +68,7 @@ const mongoStorage = {
     await connectMongoDB();
     if (!isConnected) return null;
 
-    const now = new Date();
+    const logDate = plantData.loggedAt ? new Date(plantData.loggedAt) : new Date();
     const plantId = plantData.id || 'plant_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
 
     const newPlant = new PlantModel({
@@ -88,7 +88,7 @@ const mongoStorage = {
           id: 'log_' + Date.now(),
           height: parseFloat(plantData.height) || 0,
           unit: plantData.heightUnit || 'cm',
-          loggedAt: now,
+          loggedAt: logDate,
           note: 'Initial plant record'
         }
       ]
@@ -110,29 +110,37 @@ const mongoStorage = {
     return updated ? updated.toObject() : null;
   },
 
-  async addHeightLog(plantId, height, unit, note) {
+  async addHeightLog(plantId, height, unit, note, customLoggedAt) {
     await connectMongoDB();
     if (!isConnected) return null;
 
     const numericHeight = parseFloat(height);
+    const logDate = customLoggedAt ? new Date(customLoggedAt) : new Date();
+
     const newLog = {
       id: 'log_' + Date.now(),
       height: numericHeight,
       unit: unit || 'cm',
-      loggedAt: new Date(),
+      loggedAt: logDate,
       note: note || 'Growth update'
     };
 
-    const updated = await PlantModel.findOneAndUpdate(
-      { id: plantId },
-      {
-        $set: { currentHeight: numericHeight, heightUnit: newLog.unit },
-        $push: { heightHistory: { $each: [newLog], $position: 0 } }
-      },
-      { new: true }
-    );
+    const plant = await PlantModel.findOne({ id: plantId });
+    if (!plant) return null;
 
-    return updated ? updated.toObject() : null;
+    plant.heightHistory.push(newLog);
+    // Sort logs chronologically descending (newest first)
+    plant.heightHistory.sort((a, b) => new Date(b.loggedAt) - new Date(a.loggedAt));
+    
+    // Set current height to the most recent log
+    const latestLog = plant.heightHistory[0];
+    if (latestLog) {
+      plant.currentHeight = latestLog.height;
+      plant.heightUnit = latestLog.unit;
+    }
+
+    await plant.save();
+    return plant.toObject();
   },
 
   async deletePlant(id) {

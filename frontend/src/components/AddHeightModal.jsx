@@ -6,6 +6,15 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
   const [height, setHeight] = useState(plant.currentHeight || '');
   const [unit, setUnit] = useState(plant.heightUnit || 'cm');
   const [note, setNote] = useState('');
+  
+  // Format current local date and time for <input type="datetime-local">
+  const getNowFormatted = () => {
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+  };
+
+  const [loggedAt, setLoggedAt] = useState(getNowFormatted());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,7 +32,8 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
       const updatedPlant = await plantApi.addHeightLog(plant.id, {
         height: parseFloat(height),
         unit,
-        note: note.trim() || 'Recorded growth update'
+        note: note.trim() || 'Recorded growth update',
+        loggedAt: loggedAt ? new Date(loggedAt).toISOString() : new Date().toISOString()
       });
 
       setIsSubmitting(false);
@@ -62,9 +72,9 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
         {/* Form */}
         <form onSubmit={handleSubmit}>
           
-          {/* Height Input & Unit Selector - Combined Flex Row for Mobile Safe Bounds */}
+          {/* Height Input & Unit Selector */}
           <div className="form-group">
-            <label className="form-label">New Recorded Height & Unit</label>
+            <label className="form-label">Recorded Height & Unit</label>
             <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
               <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
@@ -75,7 +85,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
                   style={{ paddingLeft: '2.5rem', width: '100%' }}
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  placeholder="Enter height..."
+                  placeholder="Enter exact height (e.g. 18.5)..."
                   required
                 />
               </div>
@@ -92,6 +102,23 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
             </div>
           </div>
 
+          {/* Exact Measurement Date & Time Picker */}
+          <div className="form-group">
+            <label className="form-label">Measurement Date & Time</label>
+            <div style={{ position: 'relative' }}>
+              <Calendar size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              <input
+                type="datetime-local"
+                className="form-input"
+                style={{ paddingLeft: '2.5rem', colorScheme: 'dark', width: '100%' }}
+                value={loggedAt}
+                onChange={(e) => setLoggedAt(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Log Note */}
           <div className="form-group">
             <label className="form-label">Log Note (Optional)</label>
             <input

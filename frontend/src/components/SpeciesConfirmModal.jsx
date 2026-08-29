@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { Leaf, Check, Ruler, X } from 'lucide-react';
+import { Leaf, Check, Ruler, Calendar } from 'lucide-react';
 
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
   const [speciesName, setSpeciesName] = useState(data?.identification?.speciesName || 'Unknown Plant');
   const [scientificName, setScientificName] = useState(data?.identification?.scientificName || '');
   const [currentHeight, setCurrentHeight] = useState(data?.identification?.suggestedHeight || '10');
   const [heightUnit, setHeightUnit] = useState('cm');
+
+  const getNowFormatted = () => {
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+  };
+
+  const [loggedAt, setLoggedAt] = useState(getNowFormatted());
   const [notes, setNotes] = useState(data?.identification?.careSummary || 'Added to plant collection');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,6 +30,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
       heightUnit,
       imageUrl: data.imageUrl,
       notes: notes.trim(),
+      loggedAt: loggedAt ? new Date(loggedAt).toISOString() : new Date().toISOString(),
       isSpeciesConfirmed: true
     };
 
@@ -61,7 +70,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
             style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             title="Close Modal"
           >
-            <X size={18} />
+            ✕
           </button>
         </div>
 
@@ -108,7 +117,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
             />
           </div>
 
-          {/* Height Input & Unit Selector - Combined Flex Row for Mobile Safe Bounds */}
+          {/* Height Input & Unit Selector */}
           <div className="form-group">
             <label className="form-label">Initial Recorded Height & Unit</label>
             <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
@@ -134,6 +143,22 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
                 <option value="inches">in</option>
                 <option value="m">m</option>
               </select>
+            </div>
+          </div>
+
+          {/* Exact Measurement Date & Time Picker */}
+          <div className="form-group">
+            <label className="form-label">Initial Measurement Date & Time</label>
+            <div style={{ position: 'relative' }}>
+              <Calendar size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              <input
+                type="datetime-local"
+                className="form-input"
+                style={{ paddingLeft: '2.5rem', colorScheme: 'dark', width: '100%' }}
+                value={loggedAt}
+                onChange={(e) => setLoggedAt(e.target.value)}
+                required
+              />
             </div>
           </div>
 

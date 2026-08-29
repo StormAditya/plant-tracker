@@ -96,7 +96,8 @@ const plantController = {
         heightUnit,
         imageUrl,
         notes,
-        careTips
+        careTips,
+        loggedAt
       } = req.body;
 
       if (!speciesName) {
@@ -112,7 +113,8 @@ const plantController = {
         heightUnit: heightUnit || 'cm',
         imageUrl,
         notes: notes || '',
-        careTips: careTips || ''
+        careTips: careTips || '',
+        loggedAt
       });
 
       return res.status(201).json({
@@ -141,12 +143,12 @@ const plantController = {
   // Add new height log measurement for growth tracking
   async addHeightLog(req, res) {
     try {
-      const { height, heightUnit, note } = req.body;
+      const { height, heightUnit, note, loggedAt } = req.body;
       if (height === undefined || height === null) {
         return res.status(400).json({ error: 'Height measurement is required' });
       }
 
-      const updatedPlant = await storageService.addHeightLog(req.params.id, height, heightUnit, note);
+      const updatedPlant = await storageService.addHeightLog(req.params.id, height, heightUnit, note, loggedAt);
       if (!updatedPlant) {
         return res.status(404).json({ error: 'Plant not found' });
       }

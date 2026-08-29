@@ -65,6 +65,7 @@ const storageService = {
 
     const db = readLocalData();
     const now = new Date().toISOString();
+    const logDate = plantData.loggedAt ? new Date(plantData.loggedAt).toISOString() : now;
 
     const newPlant = {
       id: plantData.id || 'plant_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -85,7 +86,7 @@ const storageService = {
           id: 'log_' + Date.now(),
           height: parseFloat(plantData.height) || 0,
           unit: plantData.heightUnit || 'cm',
-          loggedAt: now,
+          loggedAt: logDate,
           note: 'Initial plant record'
         }
       ]
@@ -118,9 +119,9 @@ const storageService = {
     return updatedPlant;
   },
 
-  async addHeightLog(plantId, height, unit, note) {
+  async addHeightLog(plantId, height, unit, note, customLoggedAt) {
     if (process.env.MONGODB_URI) {
-      const cloudResult = await mongoStorage.addHeightLog(plantId, height, unit, note);
+      const cloudResult = await mongoStorage.addHeightLog(plantId, height, unit, note, customLoggedAt);
       if (cloudResult) return cloudResult;
     }
 
@@ -129,21 +130,27 @@ const storageService = {
     if (!plant) return null;
 
     const now = new Date().toISOString();
+    const logDate = customLoggedAt ? new Date(customLoggedAt).toISOString() : now;
     const numericHeight = parseFloat(height);
 
     const newLog = {
       id: 'log_' + Date.now(),
       height: numericHeight,
       unit: unit || plant.heightUnit || 'cm',
-      loggedAt: now,
+      loggedAt: logDate,
       note: note || 'Growth update'
     };
 
-    plant.currentHeight = numericHeight;
-    plant.heightUnit = newLog.unit;
-    plant.updatedAt = now;
     if (!plant.heightHistory) plant.heightHistory = [];
-    plant.heightHistory.unshift(newLog);
+    plant.heightHistory.push(newLog);
+    plant.heightHistory.sort((a, b) => new Date(b.loggedAt) - new Date(a.loggedAt));
+
+    const latestLog = plant.heightHistory[0];
+    if (latestLog) {
+      plant.currentHeight = latestLog.height;
+      plant.heightUnit = latestLog.unit;
+    }
+    plant.updatedAt = now;
 
     writeLocalData(db);
     return plant;
