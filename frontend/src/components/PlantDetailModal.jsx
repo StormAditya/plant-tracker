@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity } from 'lucide-react';
+import { Ruler, Calendar, Plus, Edit3, Trash2, Leaf, Info, Activity, Maximize2 } from 'lucide-react';
 import GrowthChart from './GrowthChart';
+import ImageLightboxModal from './ImageLightboxModal';
 
 export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, onDelete, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showLightbox, setShowLightbox] = useState(false);
   const [speciesName, setSpeciesName] = useState(plant.speciesName);
   const [scientificName, setScientificName] = useState(plant.scientificName || '');
   const [notes, setNotes] = useState(plant.notes || '');
@@ -30,13 +32,37 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
         {/* Hero Section - 1 Column Stacked on Mobile */}
         <div className="detail-hero-grid">
           
-          {/* Photo Box */}
-          <div className="detail-photo-container">
+          {/* Photo Box with Lightbox Click Trigger */}
+          <div
+            className="detail-photo-container"
+            onClick={() => setShowLightbox(true)}
+            style={{ cursor: 'pointer', position: 'relative' }}
+            title="Click to view full image in accurate aspect ratio"
+          >
             <img
               src={plant.imageUrl || 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=500'}
               alt={plant.speciesName}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
+            {/* View Full Image Overlay Hint */}
+            <div style={{
+              position: 'absolute',
+              bottom: '10px',
+              right: '10px',
+              background: 'rgba(0, 0, 0, 0.75)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: '20px',
+              padding: '0.35rem 0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              color: '#ffffff',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              border: '1px solid rgba(255, 255, 255, 0.15)'
+            }}>
+              <Maximize2 size={12} color="var(--emerald-light)" /> View Full Photo
+            </div>
           </div>
 
           {/* Plant Profile Info Box */}
@@ -152,6 +178,16 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
         </div>
 
       </div>
+
+      {/* Full-Resolution Accurate Aspect Ratio Image Lightbox */}
+      {showLightbox && (
+        <ImageLightboxModal
+          imageUrl={plant.imageUrl}
+          title={plant.speciesName}
+          onClose={() => setShowLightbox(false)}
+        />
+      )}
+
     </div>
   );
 }
