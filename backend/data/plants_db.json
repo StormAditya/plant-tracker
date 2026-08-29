@@ -1,0 +1,32 @@
+{
+  "plants": [
+    {
+      "id": "plant_1788009564488_3t5me",
+      "speciesName": "Indian Sandalwood",
+      "scientificName": "Santalum album",
+      "isSpeciesConfirmed": true,
+      "engineUsed": "Google Gemini AI (gemini-3.6-flash)",
+      "currentHeight": 15,
+      "heightUnit": "cm",
+      "imageUrl": "https://res.cloudinary.com/lfrakie3/image/upload/v1788009519/flora_scan_plants/plant_480p_1788009509599_rfgvc.webp",
+      "compressedResolution": "480p",
+      "careTips": "Sandalwood is a hemiparasitic sapling that thrives best in full sun with well-draining soil. Provide a suitable host plant nearby to support its long-term growth and water moderately during dry periods.",
+      "notes": "",
+      "createdAt": "2026-08-29T13:19:24.488Z",
+      "updatedAt": "2026-08-29T13:19:24.488Z",
+      "heightHistory": [
+        {
+          "id": "log_1788009564488",
+          "height": 15,
+          "unit": "cm",
+          "loggedAt": "2026-08-29T13:19:24.488Z",
+          "note": "Initial plant record"
+        }
+      ]
+    }
+  ],
+  "storageMetadata": {
+    "provider": "local",
+    "maxFreeStorageNote": "Configured for compressed 480p image uploads. Integratable with Supabase Storage or Cloudinary free tiers."
+  }
+}
