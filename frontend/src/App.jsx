@@ -12,6 +12,7 @@ export default function App() {
   const [plants, setPlants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Modals state
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -23,6 +24,17 @@ export default function App() {
   // Fetch plants on mount
   useEffect(() => {
     loadPlants();
+
+    const handleScroll = () => {
+      if (window.scrollY > 70) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const loadPlants = async () => {
@@ -98,6 +110,39 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', padding: '0 1rem 3rem 1rem' }}>
       
+      {/* Sticky Compact Mobile Scroll Top Bar */}
+      <div className={`sticky-mobile-scroll-bar ${isScrolled ? 'visible' : ''}`}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '9px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)'
+          }}>
+            <Leaf size={18} color="#04120a" strokeWidth={2.5} />
+          </div>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.05rem', color: '#ffffff' }}>
+            Flora<span className="text-gradient">Scan</span>
+          </span>
+        </div>
+
+        <div style={{ position: 'relative', flex: 1, maxWidth: '210px', marginLeft: '0.5rem' }}>
+          <Search size={14} color="var(--text-dim)" style={{ position: 'absolute', left: '0.65rem', top: '50%', transform: 'translateY(-50%)' }} />
+          <input
+            type="text"
+            className="form-input"
+            style={{ paddingLeft: '2.1rem', paddingRight: '0.6rem', height: '36px', minHeight: '36px', fontSize: '0.85rem', borderRadius: '10px', width: '100%' }}
+            placeholder="Search plants..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Minimalist Header */}
       <Header />
 
