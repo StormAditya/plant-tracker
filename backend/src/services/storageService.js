@@ -66,6 +66,8 @@ const storageService = {
     const db = readLocalData();
     const now = new Date().toISOString();
     const logDate = plantData.loggedAt ? new Date(plantData.loggedAt).toISOString() : now;
+    const initialHeight = parseFloat(plantData.height) || 0;
+    const initialUnit = plantData.heightUnit || 'cm';
 
     const newPlant = {
       id: plantData.id || 'plant_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
@@ -73,8 +75,8 @@ const storageService = {
       scientificName: plantData.scientificName || '',
       isSpeciesConfirmed: plantData.isSpeciesConfirmed !== undefined ? plantData.isSpeciesConfirmed : true,
       engineUsed: plantData.engineUsed || 'Google Gemini AI',
-      currentHeight: parseFloat(plantData.height) || 0,
-      heightUnit: plantData.heightUnit || 'cm',
+      currentHeight: initialHeight,
+      heightUnit: initialUnit,
       imageUrl: plantData.imageUrl || '',
       compressedResolution: plantData.compressedResolution || '480p',
       careTips: plantData.careTips || '',
@@ -84,8 +86,8 @@ const storageService = {
       heightHistory: [
         {
           id: 'log_' + Date.now(),
-          height: parseFloat(plantData.height) || 0,
-          unit: plantData.heightUnit || 'cm',
+          height: initialHeight,
+          unit: initialUnit,
           loggedAt: logDate,
           note: 'Initial plant record'
         }
@@ -108,15 +110,29 @@ const storageService = {
     if (index === -1) return null;
 
     const plant = db.plants[index];
-    const updatedPlant = {
-      ...plant,
-      ...updateFields,
-      updatedAt: new Date().toISOString()
-    };
+    if (updateFields.currentHeight !== undefined && !isNaN(parseFloat(updateFields.currentHeight))) {
+      const newHeight = parseFloat(updateFields.currentHeight);
+      plant.currentHeight = newHeight;
+      if (plant.heightHistory && plant.heightHistory.length > 0) {
+        plant.heightHistory[0].height = newHeight;
+      }
+    }
 
-    db.plants[index] = updatedPlant;
+    if (updateFields.heightUnit) {
+      plant.heightUnit = updateFields.heightUnit;
+      if (plant.heightHistory && plant.heightHistory.length > 0) {
+        plant.heightHistory[0].unit = updateFields.heightUnit;
+      }
+    }
+
+    if (updateFields.speciesName) plant.speciesName = updateFields.speciesName;
+    if (updateFields.scientificName !== undefined) plant.scientificName = updateFields.scientificName;
+    if (updateFields.notes !== undefined) plant.notes = updateFields.notes;
+    plant.updatedAt = new Date().toISOString();
+
+    db.plants[index] = plant;
     writeLocalData(db);
-    return updatedPlant;
+    return plant;
   },
 
   async addHeightLog(plantId, height, unit, note, customLoggedAt) {

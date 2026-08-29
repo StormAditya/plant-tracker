@@ -11,6 +11,8 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
 
   const [speciesName, setSpeciesName] = useState(plant.speciesName);
   const [scientificName, setScientificName] = useState(plant.scientificName || '');
+  const [currentHeight, setCurrentHeight] = useState(plant.currentHeight || '');
+  const [heightUnit, setHeightUnit] = useState(plant.heightUnit || 'cm');
   const [notes, setNotes] = useState(plant.notes || '');
 
   const handleSaveEdit = (e) => {
@@ -18,6 +20,8 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
     onUpdatePlant(plant.id, {
       speciesName: speciesName.trim(),
       scientificName: scientificName.trim(),
+      currentHeight: parseFloat(currentHeight) || 0,
+      heightUnit,
       notes: notes.trim()
     });
     setIsEditing(false);
@@ -156,6 +160,29 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Scientific Botanical Name</label>
                   <input type="text" className="form-input" value={scientificName} onChange={(e) => setScientificName(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Recorded Height & Unit</label>
+                  <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      step="0.1"
+                      className="form-input"
+                      style={{ flex: 1 }}
+                      value={currentHeight}
+                      onChange={(e) => setCurrentHeight(e.target.value)}
+                      required
+                    />
+                    <select
+                      className="form-select form-select-unit"
+                      value={heightUnit}
+                      onChange={(e) => setHeightUnit(e.target.value)}
+                    >
+                      <option value="cm">cm</option>
+                      <option value="inches">in</option>
+                      <option value="m">m</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">Notes</label>

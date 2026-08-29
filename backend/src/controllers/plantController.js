@@ -93,7 +93,9 @@ const plantController = {
         isSpeciesConfirmed,
         engineUsed,
         height,
+        currentHeight,
         heightUnit,
+        unit,
         imageUrl,
         notes,
         careTips,
@@ -104,13 +106,16 @@ const plantController = {
         return res.status(400).json({ error: 'Species name is required' });
       }
 
+      const initialHeight = height !== undefined ? height : currentHeight;
+      const initialUnit = heightUnit || unit || 'cm';
+
       const newPlant = await storageService.savePlant({
         speciesName,
         scientificName,
         isSpeciesConfirmed: isSpeciesConfirmed !== undefined ? Boolean(isSpeciesConfirmed) : true,
         engineUsed,
-        height: height || 0,
-        heightUnit: heightUnit || 'cm',
+        height: initialHeight || 0,
+        heightUnit: initialUnit,
         imageUrl,
         notes: notes || '',
         careTips: careTips || '',
@@ -127,7 +132,7 @@ const plantController = {
     }
   },
 
-  // Edit existing plant species/details
+  // Edit existing plant species/details (supports updating height and unit directly)
   async update(req, res) {
     try {
       const updated = await storageService.updatePlant(req.params.id, req.body);
@@ -143,12 +148,15 @@ const plantController = {
   // Add new height log measurement for growth tracking
   async addHeightLog(req, res) {
     try {
-      const { height, heightUnit, note, loggedAt } = req.body;
-      if (height === undefined || height === null) {
-        return res.status(400).json({ error: 'Height measurement is required' });
+      const { height, heightUnit, unit, note, loggedAt } = req.body;
+      const finalHeight = parseFloat(height);
+
+      if (isNaN(finalHeight)) {
+        return res.status(400).json({ error: 'Valid height measurement number is required' });
       }
 
-      const updatedPlant = await storageService.addHeightLog(req.params.id, height, heightUnit, note, loggedAt);
+      const finalUnit = heightUnit || unit || 'cm';
+      const updatedPlant = await storageService.addHeightLog(req.params.id, finalHeight, finalUnit, note, loggedAt);
       if (!updatedPlant) {
         return res.status(404).json({ error: 'Plant not found' });
       }

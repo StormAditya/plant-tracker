@@ -58,7 +58,7 @@ export const plantApi = {
     return data.plant;
   },
 
-  // Update existing plant profile details
+  // Update existing plant profile details (speciesName, scientificName, currentHeight, heightUnit, notes)
   async updatePlant(id, updatePayload) {
     const response = await fetch(`${BASE_URL}/plants/${id}`, {
       method: 'PUT',
@@ -76,18 +76,35 @@ export const plantApi = {
     return data.plant;
   },
 
-  // Add new height log measurement to track growth
-  async addHeightLog(plantId, height, heightUnit = 'cm', note = '') {
+  // Add new height log measurement to track growth (supports object or positional parameters)
+  async addHeightLog(plantId, payload, legacyUnit, legacyNote) {
+    let bodyPayload;
+    if (typeof payload === 'object' && payload !== null) {
+      bodyPayload = {
+        height: parseFloat(payload.height),
+        heightUnit: payload.heightUnit || payload.unit || 'cm',
+        note: payload.note || 'Recorded growth update',
+        loggedAt: payload.loggedAt
+      };
+    } else {
+      bodyPayload = {
+        height: parseFloat(payload),
+        heightUnit: legacyUnit || 'cm',
+        note: legacyNote || 'Recorded growth update'
+      };
+    }
+
     const response = await fetch(`${BASE_URL}/plants/${plantId}/height`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ height, heightUnit, note })
+      body: JSON.stringify(bodyPayload)
     });
 
     if (!response.ok) {
-      throw new Error('Failed to record new height measurement');
+      const err = await response.json().catch(() => ({ error: 'Failed to record height' }));
+      throw new Error(err.error || 'Failed to record new height measurement');
     }
 
     const data = await response.json();

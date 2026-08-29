@@ -70,6 +70,8 @@ const mongoStorage = {
 
     const logDate = plantData.loggedAt ? new Date(plantData.loggedAt) : new Date();
     const plantId = plantData.id || 'plant_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    const initialHeight = parseFloat(plantData.height) || 0;
+    const initialUnit = plantData.heightUnit || 'cm';
 
     const newPlant = new PlantModel({
       id: plantId,
@@ -77,8 +79,8 @@ const mongoStorage = {
       scientificName: plantData.scientificName || '',
       isSpeciesConfirmed: plantData.isSpeciesConfirmed !== undefined ? plantData.isSpeciesConfirmed : true,
       engineUsed: plantData.engineUsed || 'Google Gemini AI',
-      currentHeight: parseFloat(plantData.height) || 0,
-      heightUnit: plantData.heightUnit || 'cm',
+      currentHeight: initialHeight,
+      heightUnit: initialUnit,
       imageUrl: plantData.imageUrl || '',
       compressedResolution: plantData.compressedResolution || '480p',
       careTips: plantData.careTips || '',
@@ -86,8 +88,8 @@ const mongoStorage = {
       heightHistory: [
         {
           id: 'log_' + Date.now(),
-          height: parseFloat(plantData.height) || 0,
-          unit: plantData.heightUnit || 'cm',
+          height: initialHeight,
+          unit: initialUnit,
           loggedAt: logDate,
           note: 'Initial plant record'
         }
@@ -102,12 +104,30 @@ const mongoStorage = {
     await connectMongoDB();
     if (!isConnected) return null;
 
-    const updated = await PlantModel.findOneAndUpdate(
-      { id },
-      { $set: updateFields },
-      { new: true }
-    );
-    return updated ? updated.toObject() : null;
+    const plant = await PlantModel.findOne({ id });
+    if (!plant) return null;
+
+    if (updateFields.currentHeight !== undefined && !isNaN(parseFloat(updateFields.currentHeight))) {
+      const newHeight = parseFloat(updateFields.currentHeight);
+      plant.currentHeight = newHeight;
+      if (plant.heightHistory && plant.heightHistory.length > 0) {
+        plant.heightHistory[0].height = newHeight;
+      }
+    }
+
+    if (updateFields.heightUnit) {
+      plant.heightUnit = updateFields.heightUnit;
+      if (plant.heightHistory && plant.heightHistory.length > 0) {
+        plant.heightHistory[0].unit = updateFields.heightUnit;
+      }
+    }
+
+    if (updateFields.speciesName) plant.speciesName = updateFields.speciesName;
+    if (updateFields.scientificName !== undefined) plant.scientificName = updateFields.scientificName;
+    if (updateFields.notes !== undefined) plant.notes = updateFields.notes;
+
+    await plant.save();
+    return plant.toObject();
   },
 
   async addHeightLog(plantId, height, unit, note, customLoggedAt) {
