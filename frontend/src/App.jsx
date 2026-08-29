@@ -68,6 +68,10 @@ export default function App() {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
   const handleResetFilters = () => {
     setFilters({
       filterExactHeight: '',
@@ -79,7 +83,7 @@ export default function App() {
     });
   };
 
-  // Count active filters
+  // Count active committed filters
   const activeFilterCount = [
     filters.filterExactHeight,
     filters.filterMinHeight,
@@ -460,7 +464,7 @@ export default function App() {
       {isFilterOpen && (
         <FilterModal
           filters={filters}
-          onUpdateFilter={handleUpdateFilter}
+          onApplyFilters={handleApplyFilters}
           onResetFilters={handleResetFilters}
           onClose={() => setIsFilterOpen(false)}
         />

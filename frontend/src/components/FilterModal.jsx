@@ -3,68 +3,83 @@ import { Filter, Calendar, Ruler, RotateCcw, Check, X } from 'lucide-react';
 
 export default function FilterModal({
   filters,
-  onUpdateFilter,
+  onApplyFilters,
   onResetFilters,
   onClose
 }) {
-  // Determine initial active mode for Height
+  // Local Draft State - Only applied when user clicks "Apply & Close"
+  const [localFilters, setLocalFilters] = useState({ ...filters });
+
+  // Determine initial active mode for Height from draft filters
   const getInitialHeightMode = () => {
-    if (filters.filterExactHeight) return 'exact';
-    if (filters.filterMinHeight || filters.filterMaxHeight) return 'range';
+    if (localFilters.filterExactHeight) return 'exact';
+    if (localFilters.filterMinHeight || localFilters.filterMaxHeight) return 'range';
     return 'all';
   };
 
-  // Determine initial active mode for Date
+  // Determine initial active mode for Date from draft filters
   const getInitialDateMode = () => {
-    if (filters.filterExactDate) return 'exact';
-    if (filters.filterAfterDate || filters.filterBeforeDate) return 'range';
+    if (localFilters.filterExactDate) return 'exact';
+    if (localFilters.filterAfterDate || localFilters.filterBeforeDate) return 'range';
     return 'all';
   };
 
   const [heightMode, setHeightMode] = useState(getInitialHeightMode());
   const [dateMode, setDateMode] = useState(getInitialDateMode());
 
+  const handleUpdateLocalFilter = (key, value) => {
+    setLocalFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleHeightModeChange = (mode) => {
     setHeightMode(mode);
     if (mode === 'all') {
-      onUpdateFilter('filterExactHeight', '');
-      onUpdateFilter('filterMinHeight', '');
-      onUpdateFilter('filterMaxHeight', '');
+      setLocalFilters((prev) => ({ ...prev, filterExactHeight: '', filterMinHeight: '', filterMaxHeight: '' }));
     } else if (mode === 'exact') {
-      onUpdateFilter('filterMinHeight', '');
-      onUpdateFilter('filterMaxHeight', '');
+      setLocalFilters((prev) => ({ ...prev, filterMinHeight: '', filterMaxHeight: '' }));
     } else if (mode === 'range') {
-      onUpdateFilter('filterExactHeight', '');
+      setLocalFilters((prev) => ({ ...prev, filterExactHeight: '' }));
     }
   };
 
   const handleDateModeChange = (mode) => {
     setDateMode(mode);
     if (mode === 'all') {
-      onUpdateFilter('filterExactDate', '');
-      onUpdateFilter('filterAfterDate', '');
-      onUpdateFilter('filterBeforeDate', '');
+      setLocalFilters((prev) => ({ ...prev, filterExactDate: '', filterAfterDate: '', filterBeforeDate: '' }));
     } else if (mode === 'exact') {
-      onUpdateFilter('filterAfterDate', '');
-      onUpdateFilter('filterBeforeDate', '');
+      setLocalFilters((prev) => ({ ...prev, filterAfterDate: '', filterBeforeDate: '' }));
     } else if (mode === 'range') {
-      onUpdateFilter('filterExactDate', '');
+      setLocalFilters((prev) => ({ ...prev, filterExactDate: '' }));
     }
   };
 
-  const handleResetAll = () => {
+  const handleResetDraft = () => {
+    const emptyFilters = {
+      filterExactHeight: '',
+      filterMinHeight: '',
+      filterMaxHeight: '',
+      filterExactDate: '',
+      filterBeforeDate: '',
+      filterAfterDate: ''
+    };
     setHeightMode('all');
     setDateMode('all');
+    setLocalFilters(emptyFilters);
     onResetFilters();
   };
 
+  const handleApply = () => {
+    onApplyFilters(localFilters);
+    onClose();
+  };
+
   const activeCount = [
-    filters.filterExactHeight,
-    filters.filterMinHeight,
-    filters.filterMaxHeight,
-    filters.filterExactDate,
-    filters.filterBeforeDate,
-    filters.filterAfterDate
+    localFilters.filterExactHeight,
+    localFilters.filterMinHeight,
+    localFilters.filterMaxHeight,
+    localFilters.filterExactDate,
+    localFilters.filterBeforeDate,
+    localFilters.filterAfterDate
   ].filter(Boolean).length;
 
   return (
@@ -78,19 +93,19 @@ export default function FilterModal({
               <Filter size={20} color="var(--emerald-light)" /> Search Filters
               {activeCount > 0 && (
                 <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>
-                  {activeCount} Active
+                  {activeCount} Draft
                 </span>
               )}
             </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Select a mode to show only active filter input controls.
+              Configure filters below and click <strong>Apply & Close</strong> to update results.
             </p>
           </div>
           <button
             className="btn-secondary"
             onClick={onClose}
             style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            title="Close Filters"
+            title="Close Filters (Discard Unapplied Drafts)"
           >
             <X size={18} />
           </button>
@@ -117,7 +132,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -135,7 +150,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -153,7 +168,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -177,8 +192,8 @@ export default function FilterModal({
                   step="0.1"
                   className="form-input"
                   placeholder="e.g. 15 cm"
-                  value={filters.filterExactHeight}
-                  onChange={(e) => onUpdateFilter('filterExactHeight', e.target.value)}
+                  value={localFilters.filterExactHeight}
+                  onChange={(e) => handleUpdateLocalFilter('filterExactHeight', e.target.value)}
                   autoFocus
                 />
               </div>
@@ -193,8 +208,8 @@ export default function FilterModal({
                     step="0.1"
                     className="form-input"
                     placeholder="Min cm..."
-                    value={filters.filterMinHeight}
-                    onChange={(e) => onUpdateFilter('filterMinHeight', e.target.value)}
+                    value={localFilters.filterMinHeight}
+                    onChange={(e) => handleUpdateLocalFilter('filterMinHeight', e.target.value)}
                   />
                 </div>
 
@@ -205,8 +220,8 @@ export default function FilterModal({
                     step="0.1"
                     className="form-input"
                     placeholder="Max cm..."
-                    value={filters.filterMaxHeight}
-                    onChange={(e) => onUpdateFilter('filterMaxHeight', e.target.value)}
+                    value={localFilters.filterMaxHeight}
+                    onChange={(e) => handleUpdateLocalFilter('filterMaxHeight', e.target.value)}
                   />
                 </div>
               </div>
@@ -231,7 +246,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -249,7 +264,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -267,7 +282,7 @@ export default function FilterModal({
                   fontSize: '0.78rem',
                   padding: '0.5rem 0.25rem',
                   border: 'none',
-                  borderRadius: '9px',
+                  borderRadius: '99px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
@@ -290,8 +305,8 @@ export default function FilterModal({
                   type="date"
                   className="form-input"
                   style={{ colorScheme: 'dark' }}
-                  value={filters.filterExactDate}
-                  onChange={(e) => onUpdateFilter('filterExactDate', e.target.value)}
+                  value={localFilters.filterExactDate}
+                  onChange={(e) => handleUpdateLocalFilter('filterExactDate', e.target.value)}
                 />
               </div>
             )}
@@ -304,8 +319,8 @@ export default function FilterModal({
                     type="date"
                     className="form-input"
                     style={{ colorScheme: 'dark' }}
-                    value={filters.filterAfterDate}
-                    onChange={(e) => onUpdateFilter('filterAfterDate', e.target.value)}
+                    value={localFilters.filterAfterDate}
+                    onChange={(e) => handleUpdateLocalFilter('filterAfterDate', e.target.value)}
                   />
                 </div>
 
@@ -315,8 +330,8 @@ export default function FilterModal({
                     type="date"
                     className="form-input"
                     style={{ colorScheme: 'dark' }}
-                    value={filters.filterBeforeDate}
-                    onChange={(e) => onUpdateFilter('filterBeforeDate', e.target.value)}
+                    value={localFilters.filterBeforeDate}
+                    onChange={(e) => handleUpdateLocalFilter('filterBeforeDate', e.target.value)}
                   />
                 </div>
               </div>
@@ -328,7 +343,7 @@ export default function FilterModal({
             <button
               type="button"
               className="btn-secondary"
-              onClick={handleResetAll}
+              onClick={handleResetDraft}
               style={{ fontSize: '0.85rem' }}
             >
               <RotateCcw size={14} /> Reset Filters
@@ -337,7 +352,7 @@ export default function FilterModal({
             <button
               type="button"
               className="btn-primary"
-              onClick={onClose}
+              onClick={handleApply}
               style={{ fontSize: '0.88rem' }}
             >
               <Check size={16} /> Apply & Close
