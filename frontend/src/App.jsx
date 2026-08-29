@@ -101,30 +101,30 @@ export default function App() {
       {/* Minimalist Header */}
       <Header />
 
-      {/* Main Container - Full Width Mobile Friendly */}
+      {/* Main Container - Full Width Alignment */}
       <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-        {/* Search & Action Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', gap: '0.75rem', flexWrap: 'wrap' }}>
+        {/* Search & Top Action Controls */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           
-          <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+          <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
             <Search size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
               className="form-input"
               style={{ paddingLeft: '2.75rem', width: '100%' }}
-              placeholder="Search plants or notes..."
+              placeholder="Search by species, scientific name or notes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', width: 'auto' }}>
-            <button className="btn-secondary" onClick={loadPlants} title="Refresh plant list">
-              <RefreshCw size={16} /> <span className="hide-mobile">Refresh</span>
+          <div className="top-action-bar-buttons" style={{ display: 'flex', gap: '0.75rem' }}>
+            <button className="btn-secondary" onClick={loadPlants} title="Refresh plant data">
+              <RefreshCw size={16} className={isLoading ? 'spin' : ''} /> Refresh
             </button>
             <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
-              <Plus size={18} /> Identify Plant
+              <Plus size={18} /> Identify & Add Plant
             </button>
           </div>
 
@@ -136,47 +136,47 @@ export default function App() {
             background: 'rgba(239, 68, 68, 0.12)',
             border: '1px solid rgba(239, 68, 68, 0.3)',
             borderRadius: '16px',
-            padding: '1rem 1.25rem',
+            padding: '1.25rem 1.5rem',
             color: '#fca5a5',
-            marginBottom: '1.5rem',
+            marginBottom: '2rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            fontSize: '0.85rem'
+            justifyContent: 'space-between'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <AlertCircle size={20} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <AlertCircle size={24} />
               <div>
-                <strong>Backend REST API Offline</strong>
+                <strong>Backend REST API Offline:</strong>
+                <p style={{ fontSize: '0.85rem', marginTop: '0.2rem', color: '#fee2e2' }}>{error}</p>
               </div>
             </div>
-            <button className="btn-secondary" onClick={loadPlants} style={{ color: '#ffffff', minHeight: '36px', padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>Retry</button>
+            <button className="btn-secondary" onClick={loadPlants} style={{ color: '#ffffff' }}>Retry Connection</button>
           </div>
         )}
 
         {/* Loading State */}
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-            <RefreshCw size={36} color="var(--emerald-primary)" style={{ animation: 'spin 1s linear infinite' }} />
-            <p style={{ marginTop: '0.75rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading plant database...</p>
+          <div style={{ textAlign: 'center', padding: '5rem 0' }}>
+            <RefreshCw size={40} color="var(--emerald-primary)" style={{ animation: 'spin 1s linear infinite' }} />
+            <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>Loading plant database...</p>
           </div>
         ) : filteredPlants.length === 0 ? (
           /* Empty State */
-          <div className="glass-panel" style={{ textAlign: 'center', padding: '3.5rem 1.5rem' }}>
-            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--emerald-light)', marginBottom: '1rem' }}>
-              <Leaf size={28} />
+          <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--emerald-light)', marginBottom: '1.25rem' }}>
+              <Leaf size={32} />
             </div>
-            <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>No Plants Saved Yet</h3>
-            <p style={{ color: 'var(--text-muted)', maxWidth: '420px', margin: '0 auto 1.25rem auto', fontSize: '0.85rem' }}>
-              Upload or snap a plant photo to automatically identify species and track plant height over time!
+            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>No Plants Saved Yet</h3>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
+              Upload a plant photo to automatically identify species, confirm predictions, and start logging plant height over time!
             </p>
             <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
               <Sparkles size={18} /> Identify First Plant
             </button>
           </div>
         ) : (
-          /* Responsive Plant Cards Grid (1 col mobile, 2 col tablet, 3-4 col desktop) */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
+          /* Plant Cards Grid */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1.5rem' }}>
             {filteredPlants.map((plant) => (
               <PlantCard
                 key={plant.id}
@@ -191,29 +191,23 @@ export default function App() {
 
       </main>
 
-      {/* Floating Mobile Bottom Action Navigation */}
-      <div className="mobile-bottom-bar">
+      {/* Sleek Floating Action Button Stack (Bottom Right) */}
+      <div className="floating-action-stack">
         <button
+          className="floating-btn secondary-fab"
           onClick={loadPlants}
-          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem', fontSize: '0.7rem' }}
+          title="Refresh plant list"
         >
-          <RefreshCw size={20} color="var(--emerald-light)" /> Refresh
-        </button>
-
-        {/* Floating Action Button (Camera Scan) */}
-        <button
-          className="mobile-fab-btn"
-          onClick={() => setIsUploadOpen(true)}
-          title="Scan Plant Species"
-        >
-          <Camera size={28} strokeWidth={2.5} />
+          <RefreshCw size={18} className={isLoading ? 'spin' : ''} />
         </button>
 
         <button
+          className="floating-btn primary-fab"
           onClick={() => setIsUploadOpen(true)}
-          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem', fontSize: '0.7rem' }}
+          title="Identify & Add Plant"
         >
-          <Plus size={20} color="var(--emerald-light)" /> Add Plant
+          <Plus size={20} />
+          <span>Add Plant</span>
         </button>
       </div>
 
