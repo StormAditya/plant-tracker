@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, Image as ImageIcon, Sparkles, CheckCircle2, Zap, AlertCircle, RefreshCw } from 'lucide-react';
+import { UploadCloud, Sparkles, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 import { compressImageTo480p } from '../utils/imageCompressor';
 import { plantApi } from '../api/plantApi';
 
@@ -70,35 +70,17 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '560px' }}>
         
+        {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
             <h2 style={{ fontSize: '1.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={20} color="var(--emerald-primary)" /> Identify Plant Species
             </h2>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Upload a plant photo for instant AI species detection.
+              Upload or snap a plant photo for instant AI species detection.
             </p>
           </div>
           <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
-        </div>
-
-        {/* Compression & Free Storage Guarantee Banner */}
-        <div style={{
-          background: 'rgba(16, 185, 129, 0.08)',
-          border: '1px solid rgba(16, 185, 129, 0.25)',
-          borderRadius: '12px',
-          padding: '0.75rem 1rem',
-          marginBottom: '1.25rem',
-          fontSize: '0.82rem',
-          color: '#a7f3d0',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem'
-        }}>
-          <Zap size={18} color="var(--emerald-light)" style={{ flexShrink: 0 }} />
-          <div>
-            <strong>480p Auto Compression Enabled:</strong> Photos are automatically scaled down to 480p client-side before storage, preserving free storage tier quotas.
-          </div>
         </div>
 
         {/* Drag & Drop Upload Zone */}
@@ -132,10 +114,10 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
               <RefreshCw size={36} color="var(--emerald-primary)" className="spin" style={{ animation: 'spin 1s linear infinite' }} />
               <div>
                 <h4 style={{ color: 'var(--emerald-light)', fontSize: '1.05rem' }}>
-                  {isCompressing ? 'Compressing Image to 480p...' : 'AI Scanning Plant Species...'}
+                  {isCompressing ? 'Compressing Image...' : 'AI Scanning Plant Species...'}
                 </h4>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                  {isCompressing ? 'Encoding to high-efficiency WebP format' : 'Identifying leaves, scientific name & care details'}
+                  {isCompressing ? 'Encoding to high-efficiency format' : 'Identifying leaves, scientific name & care details'}
                 </p>
               </div>
             </div>
@@ -158,7 +140,7 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
                   Drag & Drop Plant Photo Here or <span style={{ color: 'var(--emerald-light)', textDecoration: 'underline' }}>Browse Files</span>
                 </p>
                 <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>
-                  Supports JPG, PNG, WebP, Camera photos up to 15MB
+                  Supports JPG, PNG, WebP, Camera photos
                 </p>
               </div>
             </div>
