@@ -1,21 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
 const plantController = require('../controllers/plantController');
 
-// Multer storage setup for 480p compressed uploaded image files
-const uploadsDir = path.join(__dirname, '../../uploads');
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || '.webp';
-    const uniqueName = 'plant_480p_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7) + ext;
-    cb(null, uniqueName);
-  }
-});
+// Multer in-memory storage setup (keeps upload in RAM buffer, preventing disk clutter in uploads/ folder)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,

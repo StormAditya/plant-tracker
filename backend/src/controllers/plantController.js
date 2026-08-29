@@ -7,42 +7,42 @@ const plantController = {
   // Step 1: Upload plant photo & get automatic AI species identification
   async identify(req, res) {
     try {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No image file uploaded' });
+      if (!req.file || !req.file.buffer) {
+        return res.status(400).json({ error: 'No image file buffer uploaded' });
       }
 
-      const imageBuffer = req.file.buffer || require('fs').readFileSync(req.file.path);
-      const mimeType = req.file.mimetype;
-      const originalFilename = req.file.originalname;
+      const imageBuffer = req.file.buffer;
+      const mimeType = req.file.mimetype || 'image/jpeg';
+      const originalFilename = req.file.originalname || 'plant_upload.webp';
 
       // Identify plant species using Gemini AI Vision
       const identificationResult = await identifyPlantSpecies(imageBuffer, mimeType, originalFilename);
 
-      // Save image to Cloudinary Free Storage CDN if provider is configured
+      // Upload directly from RAM memory buffer to Cloudinary Free Storage CDN
       let imageUrl = '';
       const isCloudinaryEnabled = process.env.STORAGE_PROVIDER === 'cloudinary' || Boolean(process.env.CLOUDINARY_CLOUD_NAME);
 
       if (isCloudinaryEnabled) {
         try {
-          console.log('☁️ Uploading compressed 480p photo to Cloudinary Free CDN...');
-          const cloudResult = await uploadToCloudinary(imageBuffer, req.file.filename || req.file.originalname);
+          console.log('☁️ Streaming 480p photo buffer directly to Cloudinary Free CDN (zero local disk saving)...');
+          const cloudResult = await uploadToCloudinary(imageBuffer, originalFilename);
           imageUrl = cloudResult.url;
           console.log(`✅ Cloudinary CDN URL: ${imageUrl}`);
         } catch (cloudErr) {
           console.error('⚠️ Cloudinary upload error:', cloudErr.message);
-          if (req.file.filename) {
-            imageUrl = `/uploads/${req.file.filename}`;
-          }
         }
-      } else if (req.file.filename) {
-        imageUrl = `/uploads/${req.file.filename}`;
-      } else if (req.file.buffer) {
+      }
+
+      // Fallback local storage only if Cloudinary is unavailable
+      if (!imageUrl) {
         const fs = require('fs');
         const uploadsDir = path.join(__dirname, '../../uploads');
-        const filename = 'img_480p_' + Date.now() + '.webp';
+        if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+        const filename = 'img_480p_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7) + '.webp';
         const targetPath = path.join(uploadsDir, filename);
-        fs.writeFileSync(targetPath, req.file.buffer);
+        fs.writeFileSync(targetPath, imageBuffer);
         imageUrl = `/uploads/${filename}`;
+        console.log(`💾 Saved fallback image to local uploads: ${imageUrl}`);
       }
 
       return res.json({
@@ -52,7 +52,7 @@ const plantController = {
         compressionInfo: {
           targetResolution: '480p',
           storageProvider: isCloudinaryEnabled && imageUrl.includes('cloudinary') ? 'Cloudinary 25GB Free CDN' : 'Local Storage',
-          note: 'Image compressed client-side to max 480p resolution before upload for maximum storage efficiency.'
+          note: 'Image streamed in-memory to Cloudinary CDN.'
         }
       });
     } catch (err) {
