@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
-import { Ruler, Plus, Calendar, AlertCircle, X } from 'lucide-react';
+import { Ruler, Plus, AlertCircle, X } from 'lucide-react';
 import { plantApi } from '../api/plantApi';
 
 export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
   const [height, setHeight] = useState(plant.currentHeight || '');
   const [unit, setUnit] = useState(plant.heightUnit || 'cm');
   const [note, setNote] = useState('');
-  
-  // Format current local date and time for <input type="datetime-local">
-  const getNowFormatted = () => {
-    const now = new Date();
-    const tzOffset = now.getTimezoneOffset() * 60000;
-    return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
-  };
-
-  const [loggedAt, setLoggedAt] = useState(getNowFormatted());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -32,8 +23,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
       const updatedPlant = await plantApi.addHeightLog(plant.id, {
         height: parseFloat(height),
         unit,
-        note: note.trim() || 'Recorded growth update',
-        loggedAt: loggedAt ? new Date(loggedAt).toISOString() : new Date().toISOString()
+        note: note.trim() || 'Recorded growth update'
       });
 
       setIsSubmitting(false);
@@ -85,7 +75,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
                   style={{ paddingLeft: '2.5rem', width: '100%' }}
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  placeholder="Enter exact height (e.g. 18.5)..."
+                  placeholder="Enter height..."
                   required
                 />
               </div>
@@ -99,22 +89,6 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
                 <option value="inches">in</option>
                 <option value="m">m</option>
               </select>
-            </div>
-          </div>
-
-          {/* Exact Measurement Date & Time Picker */}
-          <div className="form-group">
-            <label className="form-label">Measurement Date & Time</label>
-            <div style={{ position: 'relative' }}>
-              <Calendar size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
-              <input
-                type="datetime-local"
-                className="form-input"
-                style={{ paddingLeft: '2.5rem', colorScheme: 'dark', width: '100%' }}
-                value={loggedAt}
-                onChange={(e) => setLoggedAt(e.target.value)}
-                required
-              />
             </div>
           </div>
 
