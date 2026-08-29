@@ -1,17 +1,16 @@
 import React from 'react';
-import { Ruler, Calendar, CheckCircle2, TrendingUp, Plus, Trash2, Eye, Zap, Cloud } from 'lucide-react';
+import { Ruler, Calendar, TrendingUp, Plus, Trash2, Eye } from 'lucide-react';
 
 export default function PlantCard({ plant, onSelect, onAddHeight, onDelete }) {
   const historyCount = plant.heightHistory?.length || 1;
   const initialHeight = plant.heightHistory?.[plant.heightHistory.length - 1]?.height || plant.currentHeight;
   const growthDifference = (plant.currentHeight - initialHeight).toFixed(1);
   const isPositiveGrowth = parseFloat(growthDifference) > 0;
-  const isCloudinary = plant.imageUrl?.includes('cloudinary.com');
 
   return (
     <div className="glass-panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.25s ease' }}>
       
-      {/* 480p Image Header */}
+      {/* Clean Photo Header */}
       <div style={{ position: 'relative', height: '190px', width: '100%', overflow: 'hidden' }}>
         <img
           src={plant.imageUrl || 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=500&auto=format&fit=crop'}
@@ -21,27 +20,8 @@ export default function PlantCard({ plant, onSelect, onAddHeight, onDelete }) {
         <div style={{
           position: 'absolute',
           top: 0, left: 0, right: 0, bottom: 0,
-          background: 'linear-gradient(to top, rgba(7, 13, 10, 0.9) 0%, rgba(7, 13, 10, 0.2) 60%, transparent 100%)'
+          background: 'linear-gradient(to top, rgba(7, 13, 10, 0.9) 0%, rgba(7, 13, 10, 0.15) 60%, transparent 100%)'
         }} />
-
-        {/* Compression & Storage Badges */}
-        <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-          <span className="badge badge-480p" style={{ fontSize: '0.65rem' }}>
-            <Zap size={10} /> 480p
-          </span>
-          {isCloudinary && (
-            <span className="badge badge-emerald" style={{ background: 'rgba(59, 130, 246, 0.25)', color: '#93c5fd', border: '1px solid #60a5fa', fontSize: '0.65rem' }}>
-              <Cloud size={10} /> Cloudinary CDN
-            </span>
-          )}
-        </div>
-
-        {/* User Confirmed Badge */}
-        {plant.isSpeciesConfirmed && (
-          <span className="badge badge-emerald" style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '0.65rem' }}>
-            <CheckCircle2 size={10} /> Confirmed
-          </span>
-        )}
 
         {/* Species Name Overlay */}
         <div style={{ position: 'absolute', bottom: '10px', left: '12px', right: '12px' }}>
