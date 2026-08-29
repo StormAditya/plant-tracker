@@ -217,7 +217,7 @@ h1, h2, h3, h4, h5, h6 {
 .modal-content {
   width: 100%;
   max-width: 650px;
-  max-height: 90vh;
+  max-height: 88vh;
   overflow-y: auto;
   overflow-x: hidden !important;
   background: #0f1c15;
@@ -350,13 +350,14 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 640px) {
   .modal-overlay {
     align-items: flex-end;
-    padding: 0;
+    padding: 24px 0 0 0 !important; /* Safety top padding so modal top border never clips under status bar */
   }
 
   .modal-content {
     border-radius: 28px 28px 0 0;
-    max-height: 92vh;
-    padding: 1.25rem 1rem 2rem 1rem !important;
+    max-height: 88vh !important;
+    margin-top: auto;
+    padding: 1.5rem 1rem 2rem 1rem !important; /* Comfortable top padding inside bottom sheet */
     animation: slideUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 

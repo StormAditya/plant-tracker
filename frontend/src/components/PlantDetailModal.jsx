@@ -24,9 +24,16 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
         
-        {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1rem' }}>
-          <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
+        {/* Header Bar - Safe Top Breathing Room */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '0.85rem' }}>
+          <button
+            className="btn-secondary"
+            onClick={onClose}
+            style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Close Modal"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Hero Section - 1 Column Stacked on Mobile */}
