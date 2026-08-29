@@ -58,7 +58,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
           {/* Height Input & Unit Selector - Combined Flex Row for Mobile Safe Bounds */}
           <div className="form-group">
             <label className="form-label">New Recorded Height & Unit</label>
-            <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
               <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                 <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                 <input
@@ -74,8 +74,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
               </div>
 
               <select
-                className="form-select"
-                style={{ width: '90px', minWidth: '90px', padding: '0.75rem 0.5rem', textAlign: 'center' }}
+                className="form-select form-select-unit"
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
               >
