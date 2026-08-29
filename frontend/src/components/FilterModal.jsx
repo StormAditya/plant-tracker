@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Filter, Calendar, Ruler, RotateCcw, Check, X } from 'lucide-react';
 
 export default function FilterModal({
@@ -7,6 +7,57 @@ export default function FilterModal({
   onResetFilters,
   onClose
 }) {
+  // Determine initial active mode for Height
+  const getInitialHeightMode = () => {
+    if (filters.filterExactHeight) return 'exact';
+    if (filters.filterMinHeight || filters.filterMaxHeight) return 'range';
+    return 'all';
+  };
+
+  // Determine initial active mode for Date
+  const getInitialDateMode = () => {
+    if (filters.filterExactDate) return 'exact';
+    if (filters.filterAfterDate || filters.filterBeforeDate) return 'range';
+    return 'all';
+  };
+
+  const [heightMode, setHeightMode] = useState(getInitialHeightMode());
+  const [dateMode, setDateMode] = useState(getInitialDateMode());
+
+  const handleHeightModeChange = (mode) => {
+    setHeightMode(mode);
+    if (mode === 'all') {
+      onUpdateFilter('filterExactHeight', '');
+      onUpdateFilter('filterMinHeight', '');
+      onUpdateFilter('filterMaxHeight', '');
+    } else if (mode === 'exact') {
+      onUpdateFilter('filterMinHeight', '');
+      onUpdateFilter('filterMaxHeight', '');
+    } else if (mode === 'range') {
+      onUpdateFilter('filterExactHeight', '');
+    }
+  };
+
+  const handleDateModeChange = (mode) => {
+    setDateMode(mode);
+    if (mode === 'all') {
+      onUpdateFilter('filterExactDate', '');
+      onUpdateFilter('filterAfterDate', '');
+      onUpdateFilter('filterBeforeDate', '');
+    } else if (mode === 'exact') {
+      onUpdateFilter('filterAfterDate', '');
+      onUpdateFilter('filterBeforeDate', '');
+    } else if (mode === 'range') {
+      onUpdateFilter('filterExactDate', '');
+    }
+  };
+
+  const handleResetAll = () => {
+    setHeightMode('all');
+    setDateMode('all');
+    onResetFilters();
+  };
+
   const activeCount = [
     filters.filterExactHeight,
     filters.filterMinHeight,
@@ -16,67 +67,15 @@ export default function FilterModal({
     filters.filterAfterDate
   ].filter(Boolean).length;
 
-  // Height Mutual Exclusion Handlers
-  const handleExactHeightChange = (val) => {
-    onUpdateFilter('filterExactHeight', val);
-    if (val) {
-      onUpdateFilter('filterMinHeight', '');
-      onUpdateFilter('filterMaxHeight', '');
-    }
-  };
-
-  const handleMinHeightChange = (val) => {
-    onUpdateFilter('filterMinHeight', val);
-    if (val) {
-      onUpdateFilter('filterExactHeight', '');
-    }
-  };
-
-  const handleMaxHeightChange = (val) => {
-    onUpdateFilter('filterMaxHeight', val);
-    if (val) {
-      onUpdateFilter('filterExactHeight', '');
-    }
-  };
-
-  // Date Mutual Exclusion Handlers
-  const handleExactDateChange = (val) => {
-    onUpdateFilter('filterExactDate', val);
-    if (val) {
-      onUpdateFilter('filterAfterDate', '');
-      onUpdateFilter('filterBeforeDate', '');
-    }
-  };
-
-  const handleAfterDateChange = (val) => {
-    onUpdateFilter('filterAfterDate', val);
-    if (val) {
-      onUpdateFilter('filterExactDate', '');
-    }
-  };
-
-  const handleBeforeDateChange = (val) => {
-    onUpdateFilter('filterBeforeDate', val);
-    if (val) {
-      onUpdateFilter('filterExactDate', '');
-    }
-  };
-
-  const isHeightComparisonActive = Boolean(filters.filterMinHeight || filters.filterMaxHeight);
-  const isHeightExactActive = Boolean(filters.filterExactHeight);
-
-  const isDateComparisonActive = Boolean(filters.filterAfterDate || filters.filterBeforeDate);
-  const isDateExactActive = Boolean(filters.filterExactDate);
-
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '540px' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
         
         {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
             <h2 style={{ fontSize: '1.3rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Filter size={20} color="var(--emerald-light)" /> Advanced Search Filters
+              <Filter size={20} color="var(--emerald-light)" /> Search Filters
               {activeCount > 0 && (
                 <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>
                   {activeCount} Active
@@ -84,7 +83,7 @@ export default function FilterModal({
               )}
             </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Choose either <strong>Exact</strong> values or <strong>Comparison Range</strong> filters at a time.
+              Select a mode to show only active filter input controls.
             </p>
           </div>
           <button
@@ -97,116 +96,231 @@ export default function FilterModal({
           </button>
         </div>
 
-        {/* Filter Controls Form */}
+        {/* Clean Segmented Filter Controls */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
-          {/* SECTION 1: HEIGHT FILTERS (MUTUALLY EXCLUSIVE) */}
-          <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <h4 style={{ fontSize: '0.9rem', color: 'var(--emerald-light)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                <Ruler size={16} /> Height Filter Mode
-              </h4>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-                {isHeightExactActive ? 'Mode: Exact Height' : isHeightComparisonActive ? 'Mode: Height Range' : 'Exact or Range'}
-              </span>
+          {/* SECTION 1: HEIGHT FILTER SEGMENTED CONTROLS */}
+          <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.1rem' }}>
+            <h4 style={{ fontSize: '0.88rem', color: 'var(--emerald-light)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Ruler size={16} /> Height Filter
+            </h4>
+
+            {/* Segmented Mode Selector Buttons */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: 'rgba(0,0,0,0.5)', padding: '4px', borderRadius: '12px', marginBottom: '1rem', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => handleHeightModeChange('all')}
+                style={{
+                  background: heightMode === 'all' ? 'var(--emerald-primary)' : 'transparent',
+                  color: heightMode === 'all' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: heightMode === 'all' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                All Heights
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleHeightModeChange('exact')}
+                style={{
+                  background: heightMode === 'exact' ? 'var(--emerald-primary)' : 'transparent',
+                  color: heightMode === 'exact' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: heightMode === 'exact' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Exact Height
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleHeightModeChange('range')}
+                style={{
+                  background: heightMode === 'range' ? 'var(--emerald-primary)' : 'transparent',
+                  color: heightMode === 'range' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: heightMode === 'range' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Height Range
+              </button>
             </div>
 
-            {/* Exact Height Input */}
-            <div className="form-group" style={{ marginBottom: '0.75rem', opacity: isHeightComparisonActive ? 0.45 : 1 }}>
-              <label className="form-label">
-                Exact Height (cm) {isHeightComparisonActive && <span style={{ color: 'var(--accent-gold)' }}>(Disabled in Range mode)</span>}
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                className="form-input"
-                placeholder="e.g. 15 cm"
-                value={filters.filterExactHeight}
-                onChange={(e) => handleExactHeightChange(e.target.value)}
-              />
-            </div>
+            {/* ONLY DISPLAY ACTIVE MODE INPUTS */}
+            {heightMode === 'all' && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center', margin: '0.2rem 0' }}>
+                Showing plants of all height measurements.
+              </p>
+            )}
 
-            <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', margin: '0.4rem 0' }}>— OR COMPARISON RANGE —</div>
-
-            {/* Min / Max Height Range Comparison */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', opacity: isHeightExactActive ? 0.45 : 1 }}>
+            {heightMode === 'exact' && (
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Larger Than (&gt; Min)</label>
+                <label className="form-label">Enter Exact Height (cm)</label>
                 <input
                   type="number"
                   step="0.1"
                   className="form-input"
-                  placeholder="Min cm..."
-                  value={filters.filterMinHeight}
-                  onChange={(e) => handleMinHeightChange(e.target.value)}
+                  placeholder="e.g. 15 cm"
+                  value={filters.filterExactHeight}
+                  onChange={(e) => onUpdateFilter('filterExactHeight', e.target.value)}
+                  autoFocus
                 />
               </div>
+            )}
 
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Smaller Than (&lt; Max)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  className="form-input"
-                  placeholder="Max cm..."
-                  value={filters.filterMaxHeight}
-                  onChange={(e) => handleMaxHeightChange(e.target.value)}
-                />
+            {heightMode === 'range' && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Larger Than (&gt; Min cm)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="form-input"
+                    placeholder="Min cm..."
+                    value={filters.filterMinHeight}
+                    onChange={(e) => onUpdateFilter('filterMinHeight', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Smaller Than (&lt; Max cm)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="form-input"
+                    placeholder="Max cm..."
+                    value={filters.filterMaxHeight}
+                    onChange={(e) => onUpdateFilter('filterMaxHeight', e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* SECTION 2: DATE FILTERS (MUTUALLY EXCLUSIVE) */}
-          <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <h4 style={{ fontSize: '0.9rem', color: 'var(--emerald-light)', display: 'flex', alignItems: 'center', gap: '0.4rem', margin: 0 }}>
-                <Calendar size={16} /> Date Filter Mode
-              </h4>
-              <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-                {isDateExactActive ? 'Mode: Exact Date' : isDateComparisonActive ? 'Mode: Date Range' : 'Exact or Range'}
-              </span>
+          {/* SECTION 2: DATE FILTER SEGMENTED CONTROLS */}
+          <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.1rem' }}>
+            <h4 style={{ fontSize: '0.88rem', color: 'var(--emerald-light)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Calendar size={16} /> Date Filter
+            </h4>
+
+            {/* Segmented Mode Selector Buttons */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: 'rgba(0,0,0,0.5)', padding: '4px', borderRadius: '12px', marginBottom: '1rem', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => handleDateModeChange('all')}
+                style={{
+                  background: dateMode === 'all' ? 'var(--emerald-primary)' : 'transparent',
+                  color: dateMode === 'all' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: dateMode === 'all' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                All Dates
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDateModeChange('exact')}
+                style={{
+                  background: dateMode === 'exact' ? 'var(--emerald-primary)' : 'transparent',
+                  color: dateMode === 'exact' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: dateMode === 'exact' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Exact Date
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDateModeChange('range')}
+                style={{
+                  background: dateMode === 'range' ? 'var(--emerald-primary)' : 'transparent',
+                  color: dateMode === 'range' ? '#04120a' : 'var(--text-muted)',
+                  fontWeight: dateMode === 'range' ? 700 : 500,
+                  fontSize: '0.78rem',
+                  padding: '0.5rem 0.25rem',
+                  border: 'none',
+                  borderRadius: '9px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Date Range
+              </button>
             </div>
 
-            {/* Exact Date */}
-            <div className="form-group" style={{ marginBottom: '0.75rem', opacity: isDateComparisonActive ? 0.45 : 1 }}>
-              <label className="form-label">
-                Exact Date {isDateComparisonActive && <span style={{ color: 'var(--accent-gold)' }}>(Disabled in Range mode)</span>}
-              </label>
-              <input
-                type="date"
-                className="form-input"
-                style={{ colorScheme: 'dark' }}
-                value={filters.filterExactDate}
-                onChange={(e) => handleExactDateChange(e.target.value)}
-              />
-            </div>
+            {/* ONLY DISPLAY ACTIVE MODE INPUTS */}
+            {dateMode === 'all' && (
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center', margin: '0.2rem 0' }}>
+                Showing plants recorded across all dates.
+              </p>
+            )}
 
-            <div style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', margin: '0.4rem 0' }}>— OR COMPARISON RANGE —</div>
-
-            {/* Before Date & After Date Range Comparison */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', opacity: isDateExactActive ? 0.45 : 1 }}>
+            {dateMode === 'exact' && (
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">After Date (From)</label>
+                <label className="form-label">Select Exact Date</label>
                 <input
                   type="date"
                   className="form-input"
                   style={{ colorScheme: 'dark' }}
-                  value={filters.filterAfterDate}
-                  onChange={(e) => handleAfterDateChange(e.target.value)}
+                  value={filters.filterExactDate}
+                  onChange={(e) => onUpdateFilter('filterExactDate', e.target.value)}
                 />
               </div>
+            )}
 
-              <div className="form-group" style={{ marginBottom: 0 }}>
-                <label className="form-label">Before Date (To)</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  style={{ colorScheme: 'dark' }}
-                  value={filters.filterBeforeDate}
-                  onChange={(e) => handleBeforeDateChange(e.target.value)}
-                />
+            {dateMode === 'range' && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">After Date (From)</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    style={{ colorScheme: 'dark' }}
+                    value={filters.filterAfterDate}
+                    onChange={(e) => onUpdateFilter('filterAfterDate', e.target.value)}
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label className="form-label">Before Date (To)</label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    style={{ colorScheme: 'dark' }}
+                    value={filters.filterBeforeDate}
+                    onChange={(e) => onUpdateFilter('filterBeforeDate', e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -214,10 +328,10 @@ export default function FilterModal({
             <button
               type="button"
               className="btn-secondary"
-              onClick={onResetFilters}
+              onClick={handleResetAll}
               style={{ fontSize: '0.85rem' }}
             >
-              <RotateCcw size={14} /> Reset All
+              <RotateCcw size={14} /> Reset Filters
             </button>
 
             <button
@@ -226,7 +340,7 @@ export default function FilterModal({
               onClick={onClose}
               style={{ fontSize: '0.88rem' }}
             >
-              <Check size={16} /> Apply Filters
+              <Check size={16} /> Apply & Close
             </button>
           </div>
 
