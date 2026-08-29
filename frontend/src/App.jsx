@@ -6,8 +6,9 @@ import PlantCard from './components/PlantCard';
 import AddHeightModal from './components/AddHeightModal';
 import PlantDetailModal from './components/PlantDetailModal';
 import FilterModal from './components/FilterModal';
+import CustomSortDropdown from './components/CustomSortDropdown';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, ArrowUpDown, Filter, X } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Filter, X } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
@@ -302,23 +303,8 @@ export default function App() {
               )}
             </button>
 
-            {/* Sort Dropdown */}
-            <div style={{ position: 'relative', minWidth: '150px' }}>
-              <select
-                className="form-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{ paddingLeft: '2.2rem', fontSize: '0.88rem', height: '46px' }}
-                title="Sort Plant Collection"
-              >
-                <option value="newest">Sort: Date (Newest)</option>
-                <option value="oldest">Sort: Date (Oldest)</option>
-                <option value="height-high">Sort: Height (Tallest)</option>
-                <option value="height-low">Sort: Height (Shortest)</option>
-                <option value="name">Sort: Name (A - Z)</option>
-              </select>
-              <ArrowUpDown size={15} color="var(--emerald-light)" style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
-            </div>
+            {/* Custom Glassmorphic Sort Dropdown */}
+            <CustomSortDropdown value={sortBy} onChange={setSortBy} />
 
           </div>
 
