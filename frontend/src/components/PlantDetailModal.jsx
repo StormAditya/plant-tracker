@@ -71,8 +71,15 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                       {plant.currentHeight} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-muted)' }}>{plant.heightUnit}</span>
                     </div>
                   </div>
-                  <button className="btn-primary" onClick={() => { onClose(); onAddHeight(plant); }} style={{ fontSize: '0.85rem' }}>
-                    <Plus size={16} /> New Height Log
+                  
+                  {/* Clean Icon-Only (+) Button for Adding Height Log */}
+                  <button
+                    className="btn-primary"
+                    onClick={() => { onClose(); onAddHeight(plant); }}
+                    style={{ width: '44px', height: '44px', minHeight: '44px', padding: 0, borderRadius: '14px' }}
+                    title="Log New Height"
+                  >
+                    <Plus size={22} />
                   </button>
                 </div>
 
