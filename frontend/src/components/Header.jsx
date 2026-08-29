@@ -21,12 +21,9 @@ export default function Header() {
             <Leaf size={24} color="#04120a" strokeWidth={2.5} />
           </div>
           <div>
-            <h1 style={{ fontSize: '1.4rem', lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: '1.5rem', lineHeight: 1 }}>
               Flora<span className="text-gradient">Scan</span>
             </h1>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              AI Plant Identifier & Height Growth Tracker
-            </p>
           </div>
         </div>
 
