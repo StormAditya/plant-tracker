@@ -433,4 +433,17 @@ h1, h2, h3, h4, h5, h6 {
   .top-action-bar-buttons {
     display: none !important;
   }
+
+  /* Mobile Search, Filter & Sort Controls Row */
+  .search-filter-controls-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1.1fr !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .search-filter-controls-row button,
+  .search-filter-controls-row select {
+    width: 100% !important;
+  }
 }

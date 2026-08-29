@@ -261,52 +261,57 @@ export default function App() {
             />
           </div>
 
-          {/* Advanced Filter Button */}
-          <button
-            className="btn-secondary"
-            onClick={() => setIsFilterOpen(true)}
-            style={{ position: 'relative', height: '46px', border: activeFilterCount > 0 ? '1px solid var(--emerald-primary)' : undefined }}
-            title="Open Advanced Filters"
-          >
-            <Filter size={16} color={activeFilterCount > 0 ? 'var(--emerald-light)' : 'currentColor'} /> Filters
-            {activeFilterCount > 0 && (
-              <span style={{
-                background: 'var(--emerald-primary)',
-                color: '#04120a',
-                fontSize: '0.7rem',
-                fontWeight: 800,
-                borderRadius: '50%',
-                width: '18px',
-                height: '18px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: '0.2rem'
-              }}>
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
-          {/* Sort Dropdown */}
-          <div style={{ position: 'relative', minWidth: '150px' }}>
-            <select
-              className="form-select"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              style={{ paddingLeft: '2.2rem', fontSize: '0.88rem', height: '46px' }}
-              title="Sort Plant Collection"
+          {/* Filters & Sort Controls Wrapper Row */}
+          <div className="search-filter-controls-row" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            
+            {/* Advanced Filter Button */}
+            <button
+              className="btn-secondary"
+              onClick={() => setIsFilterOpen(true)}
+              style={{ position: 'relative', height: '46px', border: activeFilterCount > 0 ? '1px solid var(--emerald-primary)' : undefined }}
+              title="Open Advanced Filters"
             >
-              <option value="newest">Sort: Date (Newest)</option>
-              <option value="oldest">Sort: Date (Oldest)</option>
-              <option value="height-high">Sort: Height (Tallest)</option>
-              <option value="height-low">Sort: Height (Shortest)</option>
-              <option value="name">Sort: Name (A - Z)</option>
-            </select>
-            <ArrowUpDown size={15} color="var(--emerald-light)" style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              <Filter size={16} color={activeFilterCount > 0 ? 'var(--emerald-light)' : 'currentColor'} /> Filters
+              {activeFilterCount > 0 && (
+                <span style={{
+                  background: 'var(--emerald-primary)',
+                  color: '#04120a',
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginLeft: '0.2rem'
+                }}>
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            {/* Sort Dropdown */}
+            <div style={{ position: 'relative', minWidth: '150px' }}>
+              <select
+                className="form-select"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{ paddingLeft: '2.2rem', fontSize: '0.88rem', height: '46px' }}
+                title="Sort Plant Collection"
+              >
+                <option value="newest">Sort: Date (Newest)</option>
+                <option value="oldest">Sort: Date (Oldest)</option>
+                <option value="height-high">Sort: Height (Tallest)</option>
+                <option value="height-low">Sort: Height (Shortest)</option>
+                <option value="name">Sort: Name (A - Z)</option>
+              </select>
+              <ArrowUpDown size={15} color="var(--emerald-light)" style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+            </div>
+
           </div>
 
-          {/* Action Buttons */}
+          {/* Desktop Action Buttons */}
           <div className="top-action-bar-buttons" style={{ display: 'flex', gap: '0.75rem' }}>
             <button className="btn-secondary" onClick={loadPlants} title="Refresh plant data">
               <RefreshCw size={16} className={isLoading ? 'spin' : ''} /> Refresh

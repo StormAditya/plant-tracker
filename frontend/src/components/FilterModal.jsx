@@ -98,14 +98,14 @@ export default function FilterModal({
               )}
             </h2>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Configure filters below and click <strong>Apply & Close</strong> to update results.
+              Configure filters below and tap <strong>Apply & Close</strong> to update results.
             </p>
           </div>
           <button
             className="btn-secondary"
             onClick={onClose}
             style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            title="Close Filters (Discard Unapplied Drafts)"
+            title="Close Filters"
           >
             <X size={18} />
           </button>
@@ -338,24 +338,30 @@ export default function FilterModal({
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+          {/* Premium Full-Width Grid Buttons for Mobile & Desktop */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1.4fr',
+            gap: '0.75rem',
+            marginTop: '0.5rem',
+            width: '100%'
+          }}>
             <button
               type="button"
               className="btn-secondary"
               onClick={handleResetDraft}
-              style={{ fontSize: '0.85rem' }}
+              style={{ width: '100%', minHeight: '48px', borderRadius: '14px', fontSize: '0.9rem', justifyContent: 'center' }}
             >
-              <RotateCcw size={14} /> Reset Filters
+              <RotateCcw size={16} /> Reset
             </button>
 
             <button
               type="button"
               className="btn-primary"
               onClick={handleApply}
-              style={{ fontSize: '0.88rem' }}
+              style={{ width: '100%', minHeight: '48px', borderRadius: '14px', fontSize: '0.95rem', justifyContent: 'center' }}
             >
-              <Check size={16} /> Apply & Close
+              <Check size={18} /> Apply & Close
             </button>
           </div>
 
