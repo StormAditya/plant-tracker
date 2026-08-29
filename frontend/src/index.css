@@ -246,16 +246,13 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
-/* Floating Action Stack (Bottom-Right Action Buttons) */
+/* Floating Action Stack (Bottom-Right Action Buttons) - HIDDEN BY DEFAULT ON DESKTOP */
 .floating-action-stack {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-  z-index: 950;
+  display: none !important;
+}
+
+.top-action-bar-buttons {
+  display: flex !important;
 }
 
 .floating-btn {
@@ -326,12 +323,19 @@ h1, h2, h3, h4, h5, h6 {
     to { transform: translateY(0); }
   }
 
+  /* Show Floating Action Stack ONLY on mobile screens */
   .floating-action-stack {
+    display: flex !important;
+    position: fixed;
     bottom: 20px;
     right: 20px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    z-index: 950;
   }
 
-  /* Hide top inline buttons on mobile so floating stack handles actions */
+  /* Hide top inline buttons on mobile so floating stack handles thumb actions */
   .top-action-bar-buttons {
     display: none !important;
   }
