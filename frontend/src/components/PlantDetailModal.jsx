@@ -23,14 +23,15 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
         
         {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '1rem' }}>
           <button className="btn-secondary" onClick={onClose} style={{ padding: '0.4rem 0.8rem' }}>✕</button>
         </div>
 
-        {/* Hero Banner with photo and details */}
-        <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        {/* Hero Section - 1 Column Stacked on Mobile */}
+        <div className="detail-hero-grid">
           
-          <div style={{ position: 'relative', borderRadius: '18px', overflow: 'hidden', height: '220px', border: '1px solid var(--border-glow)' }}>
+          {/* Photo Box */}
+          <div className="detail-photo-container">
             <img
               src={plant.imageUrl || 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=500'}
               alt={plant.speciesName}
@@ -38,6 +39,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
             />
           </div>
 
+          {/* Plant Profile Info Box */}
           <div>
             {!isEditing ? (
               <div>
@@ -55,6 +57,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                   </button>
                 </div>
 
+                {/* Recorded Height Box */}
                 <div style={{
                   background: 'rgba(16, 185, 129, 0.1)',
                   border: '1px solid rgba(16, 185, 129, 0.25)',
@@ -72,7 +75,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                     </div>
                   </div>
                   
-                  {/* Clean Icon-Only (+) Button for Adding Height Log */}
+                  {/* Icon-Only (+) Button for Adding Height Log */}
                   <button
                     className="btn-primary"
                     onClick={() => { onClose(); onAddHeight(plant); }}
@@ -83,6 +86,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                   </button>
                 </div>
 
+                {/* Notes Box */}
                 {plant.notes && (
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.3)', padding: '0.6rem 0.8rem', borderRadius: '10px' }}>
                     <strong>Notes:</strong> {plant.notes}
@@ -113,12 +117,14 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
 
         </div>
 
-        {/* Growth Curve Visual Chart */}
-        <GrowthChart history={plant.heightHistory} unit={plant.heightUnit} />
+        {/* Growth Trajectory Chart Box */}
+        <div style={{ marginBottom: '1.25rem' }}>
+          <GrowthChart history={plant.heightHistory} unit={plant.heightUnit} />
+        </div>
 
-        {/* Height Growth Timeline Log List */}
+        {/* Height Growth Timeline Log List Box */}
         <div>
-          <h4 style={{ fontSize: '1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <h4 style={{ fontSize: '0.95rem', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Activity size={16} color="var(--emerald-light)" /> Height History Logs
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '180px', overflowY: 'auto' }}>
@@ -133,7 +139,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                 justifyContent: 'space-between',
                 fontSize: '0.85rem'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                   <span className="badge badge-emerald"><Ruler size={12} /> {log.height} {log.unit}</span>
                   <span style={{ color: 'var(--text-muted)' }}>{log.note || 'Recorded measurement'}</span>
                 </div>

@@ -246,6 +246,22 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+/* Detail Modal Hero Grid Layout */
+.detail-hero-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-photo-container {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  height: 220px;
+  border: 1px solid var(--border-glow);
+}
+
 /* Floating Action Stack (Bottom-Right Action Buttons) - HIDDEN BY DEFAULT ON DESKTOP */
 .floating-action-stack {
   display: none !important;
@@ -312,7 +328,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ============================================================ */
 /* MOBILE RESPONSIVE MEDIA QUERIES                              */
 /* ============================================================ */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .modal-overlay {
     align-items: flex-end;
     padding: 0;
@@ -328,6 +344,18 @@ h1, h2, h3, h4, h5, h6 {
   @keyframes slideUpMobile {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
+  }
+
+  /* 1-Column Vertical Stack for Detail View Modal on Mobile */
+  .detail-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .detail-photo-container {
+    height: 200px;
+    width: 100%;
   }
 
   /* Show Floating Action Stack ONLY on mobile screens */
