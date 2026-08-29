@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Ruler, Plus, Edit3, Trash2, Activity, Maximize2, X } from 'lucide-react';
 import GrowthChart from './GrowthChart';
 import ImageLightboxModal from './ImageLightboxModal';
+import ConfirmDialogModal from './ConfirmDialogModal';
 
 export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, onDelete, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showLightbox, setShowLightbox] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const [speciesName, setSpeciesName] = useState(plant.speciesName);
   const [scientificName, setScientificName] = useState(plant.scientificName || '');
   const [notes, setNotes] = useState(plant.notes || '');
@@ -20,11 +23,10 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete "${plant.speciesName}" from your collection? This action cannot be undone.`)) {
-      onDelete(plant.id);
-      onClose();
-    }
+  const handleConfirmDelete = () => {
+    onDelete(plant.id);
+    setShowDeleteConfirm(false);
+    onClose();
   };
 
   return (
@@ -100,7 +102,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                     </button>
                     <button
                       className="btn-danger"
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteConfirm(true)}
                       style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
                       title="Delete Plant Record"
                     >
@@ -205,6 +207,17 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
         </div>
 
       </div>
+
+      {/* Custom Confirmation Modal for Deleting Plant */}
+      {showDeleteConfirm && (
+        <ConfirmDialogModal
+          title="Delete Plant Record?"
+          message={`Are you sure you want to delete "${plant.speciesName}" from your collection? This action cannot be undone.`}
+          confirmText="Delete Plant"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
       {/* Full-Resolution Accurate Aspect Ratio Image Lightbox */}
       {showLightbox && (

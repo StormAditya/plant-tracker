@@ -127,9 +127,8 @@ export default function App() {
     }
   };
 
-  // Callback for deleting plant
+  // Callback for deleting plant (called after custom ConfirmDialogModal confirmation)
   const handleDeletePlant = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this plant record?')) return;
     try {
       await plantApi.deletePlant(id);
       setPlants((prev) => prev.filter((p) => p.id !== id));

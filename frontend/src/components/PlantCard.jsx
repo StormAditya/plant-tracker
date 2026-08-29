@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Ruler, Calendar, TrendingUp, Plus, Trash2, Eye } from 'lucide-react';
+import ConfirmDialogModal from './ConfirmDialogModal';
 
 export default function PlantCard({ plant, onSelect, onAddHeight, onDelete }) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const historyCount = plant.heightHistory?.length || 1;
   const initialHeight = plant.heightHistory?.[plant.heightHistory.length - 1]?.height || plant.currentHeight;
   const growthDifference = (plant.currentHeight - initialHeight).toFixed(1);
   const isPositiveGrowth = parseFloat(growthDifference) > 0;
+
+  const handleConfirmDelete = () => {
+    onDelete(plant.id);
+    setShowDeleteConfirm(false);
+  };
 
   return (
     <div className="glass-panel" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.25s ease' }}>
@@ -95,12 +103,23 @@ export default function PlantCard({ plant, onSelect, onAddHeight, onDelete }) {
             <Plus size={14} /> Log Height
           </button>
 
-          <button className="btn-danger" onClick={() => onDelete(plant.id)} style={{ padding: '0.5rem', justifyContent: 'center' }} title="Delete plant">
+          <button className="btn-danger" onClick={() => setShowDeleteConfirm(true)} style={{ padding: '0.5rem', justifyContent: 'center' }} title="Delete plant">
             <Trash2 size={14} />
           </button>
         </div>
 
       </div>
+
+      {/* Custom Confirmation Dialog Modal for Deleting Plant */}
+      {showDeleteConfirm && (
+        <ConfirmDialogModal
+          title="Delete Plant Record?"
+          message={`Are you sure you want to delete "${plant.speciesName}" from your collection? This action cannot be undone.`}
+          confirmText="Delete Plant"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
     </div>
   );
