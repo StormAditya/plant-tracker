@@ -6,7 +6,7 @@ import PlantCard from './components/PlantCard';
 import AddHeightModal from './components/AddHeightModal';
 import PlantDetailModal from './components/PlantDetailModal';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Camera } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
@@ -101,7 +101,7 @@ export default function App() {
       {/* Minimalist Header */}
       <Header />
 
-      {/* Main Container - Full Width Alignment */}
+      {/* Main Container */}
       <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
         {/* Search & Top Action Controls */}
@@ -191,14 +191,14 @@ export default function App() {
 
       </main>
 
-      {/* Sleek Floating Action Button Stack (Bottom Right) */}
+      {/* Mobile Floating Action Squircle Stack (Bottom Right) */}
       <div className="floating-action-stack">
         <button
           className="floating-btn secondary-fab"
           onClick={loadPlants}
           title="Refresh plant list"
         >
-          <RefreshCw size={18} className={isLoading ? 'spin' : ''} />
+          <RefreshCw size={20} className={isLoading ? 'spin' : ''} />
         </button>
 
         <button
@@ -206,8 +206,8 @@ export default function App() {
           onClick={() => setIsUploadOpen(true)}
           title="Identify & Add Plant"
         >
-          <Plus size={20} />
-          <span>Add Plant</span>
+          <Plus size={24} />
+          <span className="fab-text">Add Plant</span>
         </button>
       </div>
 

@@ -256,7 +256,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .floating-btn {
-  border-radius: 50px;
+  border-radius: 16px; /* Squircle Shape */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -272,7 +272,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #04120a;
   font-weight: 700;
   font-size: 0.95rem;
-  padding: 14px 22px;
+  padding: 14px 20px;
+  border-radius: 18px; /* Squircle */
   box-shadow: 0 10px 30px rgba(16, 185, 129, 0.45);
 }
 
@@ -287,8 +288,9 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(16, 185, 129, 0.35);
   color: var(--emerald-light);
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
+  border-radius: 16px; /* Squircle */
   padding: 0;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
@@ -323,7 +325,7 @@ h1, h2, h3, h4, h5, h6 {
     to { transform: translateY(0); }
   }
 
-  /* Show Floating Action Stack ONLY on mobile screens */
+  /* Show Squircle Floating Action Stack ONLY on mobile screens */
   .floating-action-stack {
     display: flex !important;
     position: fixed;
@@ -333,6 +335,18 @@ h1, h2, h3, h4, h5, h6 {
     align-items: flex-end;
     gap: 12px;
     z-index: 950;
+  }
+
+  /* Icon-only Squircle Primary FAB on Mobile */
+  .floating-btn.primary-fab {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-radius: 18px; /* Squircle */
+  }
+
+  .fab-text {
+    display: none !important; /* Hide text label on mobile */
   }
 
   /* Hide top inline buttons on mobile so floating stack handles thumb actions */
