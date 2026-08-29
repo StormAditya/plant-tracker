@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Check, AlertTriangle, Calendar, Ruler, FileText } from 'lucide-react';
+import { Leaf, Check, Ruler } from 'lucide-react';
 
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
   const [speciesName, setSpeciesName] = useState(data?.identification?.speciesName || 'Unknown Plant');
@@ -43,15 +43,15 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
         
         {/* Header Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.4rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.35rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Leaf size={22} color="var(--emerald-light)" /> Confirm Plant Profile
             </h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
               Verify identified species and initial height measurement.
             </p>
           </div>
@@ -61,7 +61,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
         {/* Clean Plant Photo Preview */}
         <div style={{
           position: 'relative',
-          height: '210px',
+          height: '200px',
           width: '100%',
           borderRadius: '16px',
           overflow: 'hidden',
@@ -85,7 +85,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
               className="form-input"
               value={speciesName}
               onChange={(e) => setSpeciesName(e.target.value)}
-              placeholder="e.g. Neem Tree, Snake Plant..."
+              placeholder="e.g. Neem Tree, Mango, Snake Plant..."
               required
             />
           </div>
@@ -97,36 +97,35 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
               className="form-input"
               value={scientificName}
               onChange={(e) => setScientificName(e.target.value)}
-              placeholder="e.g. Azadirachta indica..."
+              placeholder="e.g. Mangifera indica..."
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label className="form-label">Initial Recorded Height</label>
-              <div style={{ position: 'relative' }}>
-                <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
+          {/* Height Input & Unit Selector - Combined Flex Row for Mobile Safe Bounds */}
+          <div className="form-group">
+            <label className="form-label">Initial Recorded Height & Unit</label>
+            <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+                <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                 <input
                   type="number"
                   step="0.1"
                   className="form-input"
-                  style={{ paddingLeft: '2.75rem' }}
+                  style={{ paddingLeft: '2.5rem', width: '100%' }}
                   value={currentHeight}
                   onChange={(e) => setCurrentHeight(e.target.value)}
                   required
                 />
               </div>
-            </div>
 
-            <div className="form-group">
-              <label className="form-label">Unit</label>
               <select
                 className="form-select"
+                style={{ width: '90px', minWidth: '90px', padding: '0.75rem 0.5rem', textAlign: 'center' }}
                 value={heightUnit}
                 onChange={(e) => setHeightUnit(e.target.value)}
               >
                 <option value="cm">cm</option>
-                <option value="inches">inches</option>
+                <option value="inches">in</option>
                 <option value="m">m</option>
               </select>
             </div>
