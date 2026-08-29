@@ -20,27 +20,27 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
         justifyContent: 'center'
       }}
     >
-      {/* Container Wrapper ensuring 100% Full Width Push */}
+      {/* Container Wrapper taking 100% Width */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '940px',
+          maxWidth: '850px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'stretch'
         }}
       >
 
-        {/* Top Header Bar: Title on 100% Far Left, Close Button on 100% Far Right */}
+        {/* Top Header Bar: Title on Far Left, Close Button explicitly pushed to Far Right */}
         <div
           style={{
             width: '100%',
             display: 'flex',
-            justify: 'space-between',
             alignItems: 'center',
-            marginBottom: '1rem',
-            padding: '0 0.5rem'
+            justifyContent: 'space-between',
+            marginBottom: '0.85rem',
+            padding: '0 0.25rem'
           }}
         >
           {/* Plant Species Name */}
@@ -48,7 +48,7 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
             {title || 'Plant Photo'}
           </h3>
 
-          {/* Circular Close Button on 100% Far Right */}
+          {/* Circular Close Button pushed 100% to Far Right with margin-left: auto */}
           <button
             className="btn-secondary"
             onClick={onClose}
@@ -56,12 +56,13 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
               width: '42px',
               height: '42px',
               minWidth: '42px',
+              marginLeft: 'auto',
               padding: 0,
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(255, 255, 255, 0.14)',
+              background: 'rgba(255, 255, 255, 0.16)',
               border: '1px solid rgba(255, 255, 255, 0.25)',
               cursor: 'pointer'
             }}
