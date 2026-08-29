@@ -97,9 +97,6 @@ export default function FilterModal({
                 </span>
               )}
             </h2>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              Configure filters below and tap <strong>Apply & Close</strong> to update results.
-            </p>
           </div>
           <button
             className="btn-secondary"
