@@ -267,7 +267,7 @@ export default function App() {
               type="text"
               className="form-input"
               style={{ paddingLeft: '2.75rem', width: '100%' }}
-              placeholder="Search by species, scientific name or notes..."
+              placeholder="Search plants..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
