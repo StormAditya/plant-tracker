@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { deleteImageFileOrCloud } = require('./cloudinaryStorage');
 
 // Plant Mongoose Schema for MongoDB Atlas
 const heightLogSchema = new mongoose.Schema({
@@ -147,19 +146,6 @@ const mongoStorage = {
   async deletePlant(id) {
     await connectMongoDB();
     if (!isConnected) return null;
-
-    // Step 1: Find plant to retrieve image URL
-    const plant = await PlantModel.findOne({ id });
-    if (!plant) return false;
-
-    // Step 2: Delete photo from Cloudinary Free CDN / Local disk
-    if (plant.imageUrl) {
-      console.log(`🗑️ Deleting plant photo for "${plant.speciesName}" (${plant.imageUrl})...`);
-      await deleteImageFileOrCloud(plant.imageUrl);
-    }
-
-    // Step 3: Delete document from MongoDB Atlas Cloud database
-    console.log(`🍃 Deleting plant document "${plant.speciesName}" from MongoDB Atlas Cloud collection...`);
     const result = await PlantModel.deleteOne({ id });
     return result.deletedCount > 0;
   }

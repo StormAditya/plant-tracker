@@ -1,6 +1,4 @@
 const cloudinary = require('cloudinary').v2;
-const fs = require('fs');
-const path = require('path');
 
 // Configure Cloudinary from environment variables
 function initCloudinary() {
@@ -10,26 +8,6 @@ function initCloudinary() {
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true
   });
-}
-
-/**
- * Extract Cloudinary public_id from a secure URL
- * e.g. https://res.cloudinary.com/lfrakie3/image/upload/v1724927182/flora_scan_plants/img_480p_1724927182.webp
- * returns: flora_scan_plants/img_480p_1724927182
- */
-function extractPublicIdFromUrl(url) {
-  if (!url || typeof url !== 'string' || !url.includes('cloudinary.com')) return null;
-  try {
-    const parts = url.split('/upload/');
-    if (parts.length < 2) return null;
-    const pathAfterUpload = parts[1];
-    const pathWithoutVersion = pathAfterUpload.replace(/^v\d+\//, '');
-    const publicId = pathWithoutVersion.replace(/\.[^/.]+$/, '');
-    return publicId;
-  } catch (err) {
-    console.error('Error parsing Cloudinary URL:', err);
-    return null;
-  }
 }
 
 /**
@@ -62,44 +40,6 @@ async function uploadToCloudinary(imageBuffer, filename) {
   });
 }
 
-/**
- * Deletes an image from Cloudinary Free CDN or local storage when a plant is deleted
- */
-async function deleteImageFileOrCloud(imageUrl) {
-  if (!imageUrl) return;
-
-  // Case 1: Cloudinary CDN deletion
-  if (imageUrl.includes('cloudinary.com')) {
-    initCloudinary();
-    const publicId = extractPublicIdFromUrl(imageUrl);
-    if (publicId) {
-      try {
-        console.log(`☁️ Deleting photo from Cloudinary Free CDN (public_id: ${publicId})...`);
-        const result = await cloudinary.uploader.destroy(publicId);
-        console.log(`✅ Cloudinary deletion success:`, result);
-        return result;
-      } catch (err) {
-        console.error('⚠️ Failed to delete photo from Cloudinary CDN:', err.message);
-      }
-    }
-  }
-
-  // Case 2: Local Uploads folder deletion
-  if (imageUrl.startsWith('/uploads/') || imageUrl.includes('/uploads/')) {
-    try {
-      const filename = path.basename(imageUrl);
-      const localFilePath = path.join(__dirname, '../../uploads', filename);
-      if (fs.existsSync(localFilePath)) {
-        fs.unlinkSync(localFilePath);
-        console.log(`🗑️ Deleted local image file: ${localFilePath}`);
-      }
-    } catch (localErr) {
-      console.error('⚠️ Failed to delete local image file:', localErr.message);
-    }
-  }
-}
-
 module.exports = {
-  uploadToCloudinary,
-  deleteImageFileOrCloud
+  uploadToCloudinary
 };
