@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { mongoStorage } = require('./mongoStorage');
+const { deleteImageFileOrCloud } = require('./cloudinaryStorage');
 
 const DATA_DIR = path.join(__dirname, '../../data');
 const DB_FILE = path.join(DATA_DIR, 'plants_db.json');
@@ -163,10 +164,17 @@ const storageService = {
     }
 
     const db = readLocalData();
-    const initialCount = db.plants.length;
-    db.plants = db.plants.filter((p) => p.id !== id);
-    writeLocalData(db);
-    return db.plants.length < initialCount;
+    const index = db.plants.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      const deletedPlant = db.plants[index];
+      if (deletedPlant.imageUrl) {
+        deleteImageFileOrCloud(deletedPlant.imageUrl);
+      }
+      db.plants.splice(index, 1);
+      writeLocalData(db);
+      return true;
+    }
+    return false;
   }
 };
 
