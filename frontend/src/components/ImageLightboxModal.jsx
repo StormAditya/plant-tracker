@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Maximize2 } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function ImageLightboxModal({ imageUrl, title, onClose }) {
   if (!imageUrl) return null;
@@ -20,33 +20,47 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
         justifyContent: 'center'
       }}
     >
-      {/* Top Bar with Title & Close Button */}
+      {/* Top Header Bar: Title on Far Left, Close Button on Far Right */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '900px',
+          maxWidth: '92vw',
           display: 'flex',
           justify: 'space-between',
           alignItems: 'center',
-          marginBottom: '1rem',
-          padding: '0 0.5rem'
+          marginBottom: '0.75rem',
+          padding: '0 0.25rem'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Maximize2 size={18} color="var(--emerald-light)" />
-          <h3 style={{ fontSize: '1.1rem', color: '#ffffff' }}>{title || 'Plant Photo'}</h3>
-        </div>
+        {/* Plant Species Name */}
+        <h3 style={{ fontSize: '1.2rem', color: '#ffffff', fontWeight: 700, margin: 0 }}>
+          {title || 'Plant Photo'}
+        </h3>
+
+        {/* Circular Close Button on Far Right */}
         <button
           className="btn-secondary"
           onClick={onClose}
-          style={{ width: '40px', height: '40px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{
+            width: '40px',
+            height: '40px',
+            minWidth: '40px',
+            padding: 0,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}
+          title="Close full photo view"
         >
-          <X size={20} />
+          <X size={20} color="#ffffff" />
         </button>
       </div>
 
-      {/* Accurate Aspect Ratio Full Image Container */}
+      {/* Full Image Container - Accurate Uncropped Aspect Ratio */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -70,7 +84,7 @@ export default function ImageLightboxModal({ imageUrl, title, onClose }) {
             maxHeight: '85vh',
             width: 'auto',
             height: 'auto',
-            objectFit: 'contain', /* Exact accurate aspect ratio without cropping */
+            objectFit: 'contain',
             display: 'block'
           }}
         />
