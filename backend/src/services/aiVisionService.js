@@ -10,6 +10,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Araceae',
     confidenceScore: 0.94,
     careTips: 'Bright indirect light, water every 1-2 weeks when topsoil dries.',
+    suggestedHeight: 25,
     typicalHeightRange: '30cm - 300cm',
     tags: ['Indoor', 'Tropical', 'Foliage']
   },
@@ -19,6 +20,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Asparagaceae',
     confidenceScore: 0.91,
     careTips: 'Low to bright light, drought tolerant, water sparingly.',
+    suggestedHeight: 30,
     typicalHeightRange: '20cm - 120cm',
     tags: ['Indoor', 'Succulent', 'Air Purifying']
   },
@@ -28,6 +30,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Moraceae',
     confidenceScore: 0.89,
     careTips: 'Consistent bright indirect light, protect from cold drafts.',
+    suggestedHeight: 45,
     typicalHeightRange: '50cm - 300cm',
     tags: ['Indoor', 'Tree', 'Statement']
   },
@@ -37,6 +40,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Araceae',
     confidenceScore: 0.92,
     careTips: 'Thrives in medium light, fast grower, water when dry.',
+    suggestedHeight: 15,
     typicalHeightRange: '15cm - 200cm',
     tags: ['Indoor', 'Trailing', 'Easy Care']
   },
@@ -46,6 +50,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Asphodelaceae',
     confidenceScore: 0.95,
     careTips: 'Full sun to bright light, well-draining soil, minimal water.',
+    suggestedHeight: 20,
     typicalHeightRange: '15cm - 60cm',
     tags: ['Succulent', 'Medicinal', 'Indoor/Outdoor']
   },
@@ -55,6 +60,7 @@ const KNOWN_PLANTS_DATABASE = [
     family: 'Araceae',
     confidenceScore: 0.88,
     careTips: 'Shade to low light, prefers humid soil, droops when thirsty.',
+    suggestedHeight: 25,
     typicalHeightRange: '30cm - 100cm',
     tags: ['Flowering', 'Indoor', 'Air Purifying']
   }
@@ -82,13 +88,15 @@ async function identifyPlantSpecies(imageBuffer, mimeType, originalFilename) {
           }
         };
 
-        const prompt = `Analyze this plant photo carefully. Return JSON ONLY in this format:
+        const prompt = `Analyze this plant photo carefully and identify the exact plant species. Return JSON ONLY in this format:
 {
-  "speciesName": "Common Name (e.g. Monstera Deliciosa)",
-  "scientificName": "Genus species (e.g. Monstera deliciosa)",
+  "speciesName": "Common Name of the plant",
+  "scientificName": "Botanical Genus species name",
   "family": "Botanical Family",
-  "confidenceScore": 0.94,
-  "careTips": "1-2 sentence plant care guidance",
+  "confidenceScore": 0.95,
+  "suggestedHeight": 20,
+  "careTips": "Short 1-2 sentence care guidance",
+  "careSummary": "Short care summary for notes",
   "suggestedAlternatives": [
     {"speciesName": "Alt Species 1", "scientificName": "Alt Genus 1", "confidenceScore": 0.80}
   ]
@@ -113,6 +121,7 @@ async function identifyPlantSpecies(imageBuffer, mimeType, originalFilename) {
         console.log(`🎉 SUCCESS: Identified by Google Gemini AI (${modelName}): ${parsed.speciesName}`);
         return {
           ...parsed,
+          careSummary: parsed.careSummary || parsed.careTips,
           engineUsed: `Google Gemini AI (${modelName})`,
           isAiPowered: true
         };
@@ -138,6 +147,8 @@ async function identifyPlantSpecies(imageBuffer, mimeType, originalFilename) {
     family: primaryMatch.family,
     confidenceScore: primaryMatch.confidenceScore,
     careTips: primaryMatch.careTips,
+    careSummary: primaryMatch.careTips,
+    suggestedHeight: primaryMatch.suggestedHeight,
     engineUsed: 'Built-in Botanical Classifier Engine',
     isAiPowered: false,
     suggestedAlternatives: [

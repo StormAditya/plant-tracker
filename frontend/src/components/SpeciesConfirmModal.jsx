@@ -5,9 +5,13 @@ import { plantApi } from '../api/plantApi';
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
   const [speciesName, setSpeciesName] = useState(data?.identification?.speciesName || 'Unknown Plant');
   const [scientificName, setScientificName] = useState(data?.identification?.scientificName || '');
-  const [currentHeight, setCurrentHeight] = useState(data?.identification?.suggestedHeight || '10');
+  const [currentHeight, setCurrentHeight] = useState(
+    data?.identification?.suggestedHeight !== undefined ? String(data.identification.suggestedHeight) : '10'
+  );
   const [heightUnit, setHeightUnit] = useState('cm');
-  const [notes, setNotes] = useState(data?.identification?.careSummary || 'Added to plant collection');
+  const [notes, setNotes] = useState(
+    data?.identification?.careSummary || data?.identification?.careTips || 'Added to plant collection'
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -24,6 +28,8 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
       heightUnit,
       imageUrl: data.imageUrl,
       notes: notes.trim(),
+      careTips: data?.identification?.careTips || notes.trim(),
+      engineUsed: data?.identification?.engineUsed || 'Google Gemini AI',
       isSpeciesConfirmed: true
     };
 
