@@ -128,6 +128,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
                 onChange={(e) => setHeightUnit(e.target.value)}
               >
                 <option value="cm">cm</option>
+                <option value="ft">ft</option>
                 <option value="inches">in</option>
                 <option value="m">m</option>
               </select>

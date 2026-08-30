@@ -86,6 +86,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
                 onChange={(e) => setUnit(e.target.value)}
               >
                 <option value="cm">cm</option>
+                <option value="ft">ft</option>
                 <option value="inches">in</option>
                 <option value="m">m</option>
               </select>

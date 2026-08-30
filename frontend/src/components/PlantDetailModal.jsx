@@ -179,6 +179,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                       onChange={(e) => setHeightUnit(e.target.value)}
                     >
                       <option value="cm">cm</option>
+                      <option value="ft">ft</option>
                       <option value="inches">in</option>
                       <option value="m">m</option>
                     </select>
