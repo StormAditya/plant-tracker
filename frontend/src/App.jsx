@@ -216,7 +216,7 @@ export default function App() {
     });
 
   return (
-    <div style={{ minHeight: '100vh', padding: '0 1rem 3rem 1rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: '0 1rem' }}>
       
       {/* Sticky Compact Mobile Scroll Top Bar */}
       <div className={`sticky-mobile-scroll-bar ${isScrolled ? 'visible' : ''}`}>
@@ -255,7 +255,7 @@ export default function App() {
       <Header />
 
       {/* Main Container */}
-      <main style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <main style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', flex: 1 }}>
 
         {/* Search, Filter & Sort Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -442,10 +442,10 @@ export default function App() {
 
       </main>
 
-      {/* Footer */}
+      {/* Footer pinned at very bottom */}
       <footer style={{
-        marginTop: '3.5rem',
-        padding: '1.5rem 1rem',
+        marginTop: 'auto',
+        padding: '2.5rem 1rem 5.5rem 1rem',
         textAlign: 'center',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         color: 'var(--text-muted)',
@@ -454,7 +454,8 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '0.4rem',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        width: '100%'
       }}>
         <span>Made with</span>
         <Heart size={15} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
