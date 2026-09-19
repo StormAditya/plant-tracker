@@ -8,7 +8,7 @@ import PlantDetailModal from './components/PlantDetailModal';
 import FilterModal from './components/FilterModal';
 import CustomSortDropdown from './components/CustomSortDropdown';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Filter, X } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Filter, X, Heart } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
@@ -441,6 +441,28 @@ export default function App() {
         )}
 
       </main>
+
+      {/* Footer */}
+      <footer style={{
+        marginTop: '3.5rem',
+        padding: '1.5rem 1rem',
+        textAlign: 'center',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        color: 'var(--text-muted)',
+        fontSize: '0.88rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.4rem',
+        flexWrap: 'wrap'
+      }}>
+        <span>Made with</span>
+        <Heart size={15} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
+        <span>by</span>
+        <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+          Aditya, Akanksha, Kaushiki, Ashish and Atishay
+        </span>
+      </footer>
 
       {/* Mobile Floating Action Squircle Stack (Bottom Right) */}
       <div className="floating-action-stack">
