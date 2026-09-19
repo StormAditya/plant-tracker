@@ -448,21 +448,21 @@ export default function App() {
         width: '100%',
         maxWidth: '1400px',
         margin: 'auto auto 0 auto',
-        padding: '2.5rem 1.5rem 5.5rem 1.5rem',
+        padding: '1.25rem 1rem 3.5rem 1rem',
         textAlign: 'center',
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        color: 'var(--text-muted)',
-        fontSize: '0.88rem',
+        borderTop: '1px solid rgba(255, 255, 255, 0.07)',
+        color: 'var(--text-dim)',
+        fontSize: '0.78rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.4rem',
+        gap: '0.3rem',
         flexWrap: 'wrap'
       }}>
         <span>Made with</span>
-        <Heart size={15} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
+        <Heart size={12} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
         <span>by</span>
-        <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+        <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
           Aditya, Akanksha, Kaushiki, Ashish and Atishay
         </span>
       </footer>
