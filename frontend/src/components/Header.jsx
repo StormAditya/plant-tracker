@@ -22,7 +22,7 @@ export default function Header() {
           </div>
           <div>
             <h1 style={{ fontSize: '1.5rem', lineHeight: 1 }}>
-              Flora<span className="text-gradient">Scan</span>
+              Scan<span className="text-gradient">Flora</span>
             </h1>
           </div>
         </div>

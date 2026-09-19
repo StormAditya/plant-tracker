@@ -234,7 +234,7 @@ export default function App() {
             <Leaf size={18} color="#04120a" strokeWidth={2.5} />
           </div>
           <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.05rem', color: '#ffffff' }}>
-            Flora<span className="text-gradient">Scan</span>
+            Scan<span className="text-gradient">Flora</span>
           </span>
         </div>
 
