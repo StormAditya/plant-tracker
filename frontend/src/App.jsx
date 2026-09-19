@@ -442,10 +442,13 @@ export default function App() {
 
       </main>
 
-      {/* Footer pinned at very bottom */}
+      {/* Footer pinned at very bottom (matching Header width) */}
       <footer style={{
         marginTop: 'auto',
-        padding: '2.5rem 1rem 5.5rem 1rem',
+        width: '100%',
+        maxWidth: '1400px',
+        margin: 'auto auto 0 auto',
+        padding: '2.5rem 1.5rem 5.5rem 1.5rem',
         textAlign: 'center',
         borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         color: 'var(--text-muted)',
@@ -454,8 +457,7 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '0.4rem',
-        flexWrap: 'wrap',
-        width: '100%'
+        flexWrap: 'wrap'
       }}>
         <span>Made with</span>
         <Heart size={15} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
