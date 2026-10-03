@@ -220,21 +220,20 @@ export default function App() {
       
       {/* Sticky Compact Mobile Scroll Top Bar */}
       <div className={`sticky-mobile-scroll-bar ${isScrolled ? 'visible' : ''}`}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
-            width: '32px',
-            height: '32px',
-            borderRadius: '9px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 10px rgba(16, 185, 129, 0.4)'
-          }}>
-            <Leaf size={18} color="#04120a" strokeWidth={2.5} />
-          </div>
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.05rem', color: '#ffffff' }}>
-            Scan<span className="text-gradient">Flora</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <img 
+            src="/rswf-logo.jpg" 
+            alt="RSWF Logo" 
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              objectFit: 'cover'
+            }}
+          />
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.98rem', color: '#0f172a' }}>
+            <span style={{ color: '#e69500', marginRight: '0.25rem' }}>RSWF</span>
+            <span style={{ color: '#047857' }}>ScanFlora</span>
           </span>
         </div>
 
@@ -374,11 +373,11 @@ export default function App() {
         {/* Backend Connection Error Alert */}
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: '#fef2f2',
+            border: '1px solid #fca5a5',
             borderRadius: '16px',
             padding: '1.25rem 1.5rem',
-            color: '#fca5a5',
+            color: '#dc2626',
             marginBottom: '2rem',
             display: 'flex',
             alignItems: 'center',
@@ -388,10 +387,10 @@ export default function App() {
               <AlertCircle size={24} />
               <div>
                 <strong>Backend REST API Offline:</strong>
-                <p style={{ fontSize: '0.85rem', marginTop: '0.2rem', color: '#fee2e2' }}>{error}</p>
+                <p style={{ fontSize: '0.85rem', marginTop: '0.2rem', color: '#991b1b' }}>{error}</p>
               </div>
             </div>
-            <button className="btn-secondary" onClick={loadPlants} style={{ color: '#ffffff' }}>Retry Connection</button>
+            <button className="btn-secondary" onClick={loadPlants} style={{ color: '#0f172a' }}>Retry Connection</button>
           </div>
         )}
 
@@ -404,10 +403,10 @@ export default function App() {
         ) : sortedAndFilteredPlants.length === 0 ? (
           /* Empty State */
           <div className="glass-panel" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--emerald-light)', marginBottom: '1.25rem' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#ecfdf5', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#047857', marginBottom: '1.25rem', border: '1px solid #a7f3d0' }}>
               <Leaf size={32} />
             </div>
-            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.4rem', marginBottom: '0.5rem', color: '#0f172a' }}>
               {activeFilterCount > 0 ? 'No Plants Match Filters' : 'No Plants Saved Yet'}
             </h3>
             <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
@@ -450,17 +449,21 @@ export default function App() {
         margin: 'auto auto 0 auto',
         padding: '1.25rem 1rem 3.5rem 1rem',
         textAlign: 'center',
-        borderTop: '1px solid rgba(255, 255, 255, 0.07)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
         color: 'var(--text-dim)',
-        fontSize: '0.78rem',
+        fontSize: '0.8rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.3rem',
+        gap: '0.4rem',
         flexWrap: 'wrap'
       }}>
+        <strong style={{ color: 'var(--text-main)' }}>RSWF ScanFlora</strong>
+        <span>•</span>
+        <span style={{ color: '#e69500', fontWeight: 600 }}>Reform Social Welfare Foundation</span>
+        <span>•</span>
         <span>Made with</span>
-        <Heart size={12} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
+        <Heart size={13} color="#ef4444" fill="#ef4444" style={{ display: 'inline', margin: '0 1px' }} />
         <span>by</span>
         <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>
           Aditya, Akanksha, Kaushiki, Ashish and Atishay

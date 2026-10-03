@@ -29,17 +29,17 @@ export default function GrowthChart({ history = [], unit = 'cm' }) {
 
   return (
     <div style={{
-      background: 'rgba(0, 0, 0, 0.4)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
+      background: '#f8fafc',
+      border: '1px solid #e2e8f0',
       borderRadius: '16px',
       padding: '1.25rem',
       marginBottom: '1.25rem'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-        <h4 style={{ fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--emerald-light)' }}>
+        <h4 style={{ fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#047857', fontWeight: 700 }}>
           <TrendingUp size={16} /> Plant Growth Trajectory
         </h4>
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>
+        <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
           {sorted.length} Measurement{sorted.length > 1 ? 's' : ''}
         </span>
       </div>
@@ -48,15 +48,15 @@ export default function GrowthChart({ history = [], unit = 'cm' }) {
         <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
           
           {/* Horizontal grid lines */}
-          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
-          <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="rgba(255,255,255,0.05)" strokeDasharray="3 3" />
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgba(255,255,255,0.1)" />
+          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="#e2e8f0" strokeDasharray="3 3" />
+          <line x1={padding} y1={height / 2} x2={width - padding} y2={height / 2} stroke="#e2e8f0" strokeDasharray="3 3" />
+          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#cbd5e1" />
 
           {/* Growth Trend Line */}
           <path
             d={svgPathD}
             fill="none"
-            stroke="var(--emerald-primary)"
+            stroke="#10b981"
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -65,11 +65,11 @@ export default function GrowthChart({ history = [], unit = 'cm' }) {
           {/* Data Points */}
           {points.map((pt, i) => (
             <g key={i}>
-              <circle cx={pt.x} cy={pt.y} r="5" fill="#04120a" stroke="var(--emerald-light)" strokeWidth="2.5" />
-              <text x={pt.x} y={pt.y - 10} textAnchor="middle" fill="var(--emerald-light)" fontSize="10" fontWeight="bold">
+              <circle cx={pt.x} cy={pt.y} r="5" fill="#ffffff" stroke="#047857" strokeWidth="2.5" />
+              <text x={pt.x} y={pt.y - 10} textAnchor="middle" fill="#047857" fontSize="10" fontWeight="bold">
                 {pt.val} {unit}
               </text>
-              <text x={pt.x} y={height - 10} textAnchor="middle" fill="var(--text-dim)" fontSize="9">
+              <text x={pt.x} y={height - 10} textAnchor="middle" fill="#64748b" fontSize="9" fontWeight="600">
                 {pt.date}
               </text>
             </g>

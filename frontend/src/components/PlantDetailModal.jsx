@@ -69,7 +69,7 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
               position: 'absolute',
               bottom: '10px',
               right: '10px',
-              background: 'rgba(0, 0, 0, 0.75)',
+              background: 'rgba(15, 23, 42, 0.75)',
               backdropFilter: 'blur(8px)',
               borderRadius: '20px',
               padding: '0.35rem 0.75rem',
@@ -79,9 +79,9 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
               color: '#ffffff',
               fontSize: '0.72rem',
               fontWeight: 600,
-              border: '1px solid rgba(255, 255, 255, 0.15)'
+              border: '1px solid rgba(255, 255, 255, 0.2)'
             }}>
-              <Maximize2 size={12} color="var(--emerald-light)" /> View Full Photo
+              <Maximize2 size={12} color="#ffffff" /> View Full Photo
             </div>
           </div>
 
@@ -91,9 +91,9 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
                   <div>
-                    <h2 style={{ fontSize: '1.6rem', color: '#ffffff' }}>{plant.speciesName}</h2>
+                    <h2 style={{ fontSize: '1.6rem', color: '#0f172a' }}>{plant.speciesName}</h2>
                     {plant.scientificName && (
-                      <p style={{ fontSize: '0.9rem', color: 'var(--emerald-light)', fontStyle: 'italic', marginBottom: '0.75rem' }}>
+                      <p style={{ fontSize: '0.9rem', color: '#047857', fontStyle: 'italic', marginBottom: '0.75rem', fontWeight: 600 }}>
                         {plant.scientificName}
                       </p>
                     )}
@@ -117,8 +117,8 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
 
                 {/* Recorded Height Box */}
                 <div style={{
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  background: '#ecfdf5',
+                  border: '1px solid #a7f3d0',
                   borderRadius: '14px',
                   padding: '0.9rem 1.1rem',
                   margin: '0.75rem 0',
@@ -127,9 +127,9 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
                   justifyContent: 'space-between'
                 }}>
                   <div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Recorded Height</span>
-                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--emerald-light)' }}>
-                      {plant.currentHeight} <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-muted)' }}>{plant.heightUnit}</span>
+                    <span style={{ fontSize: '0.72rem', color: '#047857', textTransform: 'uppercase', fontWeight: 700 }}>Current Recorded Height</span>
+                    <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#047857' }}>
+                      {plant.currentHeight} <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#475569' }}>{plant.heightUnit}</span>
                     </div>
                   </div>
                   
@@ -146,8 +146,8 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
 
                 {/* Notes Box */}
                 {plant.notes && (
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.3)', padding: '0.6rem 0.8rem', borderRadius: '10px' }}>
-                    <strong>Notes:</strong> {plant.notes}
+                  <p style={{ fontSize: '0.85rem', color: '#475569', background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.6rem 0.8rem', borderRadius: '10px' }}>
+                    <strong style={{ color: '#0f172a' }}>Notes:</strong> {plant.notes}
                   </p>
                 )}
               </div>
@@ -206,15 +206,15 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
 
         {/* Height Growth Timeline Log List Box */}
         <div>
-          <h4 style={{ fontSize: '0.95rem', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Activity size={16} color="var(--emerald-light)" /> Height History Logs ({plant.heightHistory?.length || 0})
+          <h4 style={{ fontSize: '0.95rem', color: '#0f172a', marginBottom: '0.6rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Activity size={16} color="#047857" /> Height History Logs ({plant.heightHistory?.length || 0})
           </h4>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '180px', overflowY: 'auto' }}>
             {plant.heightHistory?.map((log, index) => (
               <div key={log.id || index} style={{
-                background: 'rgba(0,0,0,0.3)',
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
                 borderRadius: '12px',
                 padding: '0.65rem 1rem',
                 display: 'flex',
@@ -224,9 +224,9 @@ export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, on
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                   <span className="badge badge-emerald"><Ruler size={12} /> {log.height} {log.unit}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>{log.note || 'Recorded measurement'}</span>
+                  <span style={{ color: '#475569' }}>{log.note || 'Recorded measurement'}</span>
                 </div>
-                <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem' }}>
+                <span style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 500 }}>
                   {new Date(log.loggedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

@@ -79,8 +79,8 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
         {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={20} color="var(--emerald-primary)" /> Identify Plant Species
+            <h2 style={{ fontSize: '1.35rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Sparkles size={20} color="#047857" /> Identify Plant Species
             </h2>
           </div>
           <button
@@ -101,12 +101,12 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
           style={{
-            border: `2px dashed ${dragActive ? 'var(--emerald-primary)' : 'rgba(255, 255, 255, 0.18)'}`,
+            border: `2px dashed ${dragActive ? '#10b981' : '#cbd5e1'}`,
             borderRadius: '16px',
             padding: '2.5rem 1.5rem',
             textAlign: 'center',
             cursor: 'pointer',
-            background: dragActive ? 'rgba(16, 185, 129, 0.12)' : 'rgba(0, 0, 0, 0.35)',
+            background: dragActive ? '#ecfdf5' : '#f8fafc',
             transition: 'all 0.2s ease',
             position: 'relative'
           }}
@@ -121,12 +121,12 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
 
           {isCompressing || isIdentifying ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
-              <RefreshCw size={36} color="var(--emerald-primary)" className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+              <RefreshCw size={36} color="#047857" className="spin" style={{ animation: 'spin 1s linear infinite' }} />
               <div>
-                <h4 style={{ color: 'var(--emerald-light)', fontSize: '1.05rem' }}>
+                <h4 style={{ color: '#047857', fontSize: '1.05rem' }}>
                   {isCompressing ? 'Processing Image...' : 'Scanning Plant Species...'}
                 </h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.25rem' }}>
                   {isCompressing ? 'Preparing photo' : 'Identifying botanical species & care details'}
                 </p>
               </div>
@@ -137,19 +137,20 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
                 width: '56px',
                 height: '56px',
                 borderRadius: '50%',
-                background: 'rgba(16, 185, 129, 0.15)',
+                background: '#ecfdf5',
+                border: '1px solid #a7f3d0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--emerald-light)'
+                color: '#047857'
               }}>
                 <UploadCloud size={28} />
               </div>
               <div>
-                <p style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.2rem' }}>
-                  Drag & Drop Plant Photo Here or <span style={{ color: 'var(--emerald-light)', textDecoration: 'underline' }}>Browse Files</span>
+                <p style={{ fontWeight: 600, fontSize: '1rem', color: '#0f172a', marginBottom: '0.2rem' }}>
+                  Drag & Drop Plant Photo Here or <span style={{ color: '#047857', textDecoration: 'underline', fontWeight: 700 }}>Browse Files</span>
                 </p>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)' }}>
+                <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
                   Supports JPG, PNG, WebP, Camera photos
                 </p>
               </div>
@@ -161,18 +162,18 @@ export default function ImageUploader({ onIdentificationComplete, onClose }) {
         {error && (
           <div style={{
             marginTop: '1.25rem',
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
+            background: '#fef2f2',
+            border: '1px solid #fca5a5',
             borderRadius: '14px',
             padding: '1rem 1.25rem',
-            color: '#fca5a5',
+            color: '#dc2626',
             fontSize: '0.88rem'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-              <AlertCircle size={20} color="#ef4444" />
-              <strong style={{ color: '#ffffff' }}>AI Identification Error</strong>
+              <AlertCircle size={20} color="#dc2626" />
+              <strong style={{ color: '#991b1b' }}>AI Identification Error</strong>
             </div>
-            <p style={{ margin: '0 0 0.85rem 0', color: '#fecaca', fontSize: '0.83rem', lineHeight: 1.4 }}>
+            <p style={{ margin: '0 0 0.85rem 0', color: '#7f1d1d', fontSize: '0.83rem', lineHeight: 1.4 }}>
               {error}
             </p>
             <button

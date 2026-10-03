@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, Trash2, X } from 'lucide-react';
+import { AlertTriangle, Trash2 } from 'lucide-react';
 
 export default function ConfirmDialogModal({
   title = 'Delete Plant Record?',
@@ -16,8 +16,8 @@ export default function ConfirmDialogModal({
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '440px',
-          border: '1px solid rgba(239, 68, 68, 0.4)',
-          background: '#0d1712',
+          border: '1px solid #fca5a5',
+          background: '#ffffff',
           textAlign: 'center',
           padding: '2rem 1.5rem'
         }}
@@ -28,24 +28,24 @@ export default function ConfirmDialogModal({
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: '#fef2f2',
+            border: '1px solid #fca5a5',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '1rem'
           }}
         >
-          <AlertTriangle size={32} color="#ef4444" />
+          <AlertTriangle size={32} color="#dc2626" />
         </div>
 
         {/* Title */}
-        <h3 style={{ fontSize: '1.3rem', color: '#ffffff', marginBottom: '0.5rem' }}>
+        <h3 style={{ fontSize: '1.3rem', color: '#0f172a', marginBottom: '0.5rem' }}>
           {title}
         </h3>
 
         {/* Message */}
-        <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: '1.5', marginBottom: '1.5rem' }}>
+        <p style={{ fontSize: '0.88rem', color: '#475569', lineHeight: '1.5', marginBottom: '1.5rem' }}>
           {message}
         </p>
 

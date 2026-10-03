@@ -42,10 +42,10 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
         {/* Header Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.25rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Ruler size={20} color="var(--emerald-light)" /> Log Plant Height
+            <h3 style={{ fontSize: '1.25rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Ruler size={20} color="#047857" /> Log Plant Height
             </h3>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+            <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.15rem' }}>
               Record new height measurement for <strong>{plant.speciesName}</strong>
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
             <label className="form-label">Recorded Height & Unit</label>
             <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
               <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+                <Ruler size={18} color="#64748b" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                 <input
                   type="number"
                   step="0.1"
@@ -106,7 +106,7 @@ export default function AddHeightModal({ plant, onSaveComplete, onClose }) {
           </div>
 
           {error && (
-            <div style={{ background: 'rgba(239,68,68,0.12)', color: '#fca5a5', padding: '0.65rem', borderRadius: '10px', fontSize: '0.82rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', color: '#dc2626', padding: '0.65rem', borderRadius: '10px', fontSize: '0.82rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <AlertCircle size={16} /> {error}
             </div>
           )}

@@ -89,11 +89,11 @@ export default function FilterModal({
         {/* Modal Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.3rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Filter size={20} color="var(--emerald-light)" /> Search Filters
+            <h2 style={{ fontSize: '1.35rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Filter size={20} color="#047857" /> Search Filters
               {activeCount > 0 && (
                 <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>
-                  {activeCount} Draft
+                  {activeCount} Active
                 </span>
               )}
             </h2>
@@ -112,25 +112,26 @@ export default function FilterModal({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
           {/* SECTION 1: HEIGHT FILTER SEGMENTED CONTROLS */}
-          <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.1rem' }}>
-            <h4 style={{ fontSize: '0.88rem', color: 'var(--emerald-light)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '1.1rem' }}>
+            <h4 style={{ fontSize: '0.9rem', color: '#047857', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Ruler size={16} /> Height Filter
             </h4>
 
             {/* Segmented Mode Selector Buttons */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: 'rgba(0,0,0,0.5)', padding: '4px', borderRadius: '12px', marginBottom: '1rem', gap: '4px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: '#e2e8f0', padding: '4px', borderRadius: '99px', marginBottom: '1rem', gap: '4px' }}>
               <button
                 type="button"
                 onClick={() => handleHeightModeChange('all')}
                 style={{
-                  background: heightMode === 'all' ? 'var(--emerald-primary)' : 'transparent',
-                  color: heightMode === 'all' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: heightMode === 'all' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: heightMode === 'all' ? '#10b981' : 'transparent',
+                  color: heightMode === 'all' ? '#ffffff' : '#475569',
+                  fontWeight: heightMode === 'all' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: heightMode === 'all' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -141,14 +142,15 @@ export default function FilterModal({
                 type="button"
                 onClick={() => handleHeightModeChange('exact')}
                 style={{
-                  background: heightMode === 'exact' ? 'var(--emerald-primary)' : 'transparent',
-                  color: heightMode === 'exact' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: heightMode === 'exact' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: heightMode === 'exact' ? '#10b981' : 'transparent',
+                  color: heightMode === 'exact' ? '#ffffff' : '#475569',
+                  fontWeight: heightMode === 'exact' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: heightMode === 'exact' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -159,14 +161,15 @@ export default function FilterModal({
                 type="button"
                 onClick={() => handleHeightModeChange('range')}
                 style={{
-                  background: heightMode === 'range' ? 'var(--emerald-primary)' : 'transparent',
-                  color: heightMode === 'range' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: heightMode === 'range' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: heightMode === 'range' ? '#10b981' : 'transparent',
+                  color: heightMode === 'range' ? '#ffffff' : '#475569',
+                  fontWeight: heightMode === 'range' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: heightMode === 'range' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -176,7 +179,7 @@ export default function FilterModal({
 
             {/* ONLY DISPLAY ACTIVE MODE INPUTS */}
             {heightMode === 'all' && (
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center', margin: '0.2rem 0' }}>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', textAlign: 'center', margin: '0.3rem 0' }}>
                 Showing plants of all height measurements.
               </p>
             )}
@@ -226,25 +229,26 @@ export default function FilterModal({
           </div>
 
           {/* SECTION 2: DATE FILTER SEGMENTED CONTROLS */}
-          <div style={{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.1rem' }}>
-            <h4 style={{ fontSize: '0.88rem', color: 'var(--emerald-light)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '1.1rem' }}>
+            <h4 style={{ fontSize: '0.9rem', color: '#047857', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Calendar size={16} /> Date Filter
             </h4>
 
             {/* Segmented Mode Selector Buttons */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: 'rgba(0,0,0,0.5)', padding: '4px', borderRadius: '12px', marginBottom: '1rem', gap: '4px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', background: '#e2e8f0', padding: '4px', borderRadius: '99px', marginBottom: '1rem', gap: '4px' }}>
               <button
                 type="button"
                 onClick={() => handleDateModeChange('all')}
                 style={{
-                  background: dateMode === 'all' ? 'var(--emerald-primary)' : 'transparent',
-                  color: dateMode === 'all' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: dateMode === 'all' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: dateMode === 'all' ? '#10b981' : 'transparent',
+                  color: dateMode === 'all' ? '#ffffff' : '#475569',
+                  fontWeight: dateMode === 'all' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: dateMode === 'all' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -255,14 +259,15 @@ export default function FilterModal({
                 type="button"
                 onClick={() => handleDateModeChange('exact')}
                 style={{
-                  background: dateMode === 'exact' ? 'var(--emerald-primary)' : 'transparent',
-                  color: dateMode === 'exact' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: dateMode === 'exact' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: dateMode === 'exact' ? '#10b981' : 'transparent',
+                  color: dateMode === 'exact' ? '#ffffff' : '#475569',
+                  fontWeight: dateMode === 'exact' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: dateMode === 'exact' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -273,14 +278,15 @@ export default function FilterModal({
                 type="button"
                 onClick={() => handleDateModeChange('range')}
                 style={{
-                  background: dateMode === 'range' ? 'var(--emerald-primary)' : 'transparent',
-                  color: dateMode === 'range' ? '#04120a' : 'var(--text-muted)',
-                  fontWeight: dateMode === 'range' ? 700 : 500,
-                  fontSize: '0.78rem',
-                  padding: '0.5rem 0.25rem',
+                  background: dateMode === 'range' ? '#10b981' : 'transparent',
+                  color: dateMode === 'range' ? '#ffffff' : '#475569',
+                  fontWeight: dateMode === 'range' ? 700 : 600,
+                  fontSize: '0.8rem',
+                  padding: '0.55rem 0.25rem',
                   border: 'none',
                   borderRadius: '99px',
                   cursor: 'pointer',
+                  boxShadow: dateMode === 'range' ? '0 2px 6px rgba(16, 185, 129, 0.3)' : 'none',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -290,7 +296,7 @@ export default function FilterModal({
 
             {/* ONLY DISPLAY ACTIVE MODE INPUTS */}
             {dateMode === 'all' && (
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', textAlign: 'center', margin: '0.2rem 0' }}>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', textAlign: 'center', margin: '0.3rem 0' }}>
                 Showing plants recorded across all dates.
               </p>
             )}
@@ -301,7 +307,7 @@ export default function FilterModal({
                 <input
                   type="date"
                   className="form-input"
-                  style={{ colorScheme: 'dark' }}
+                  style={{ colorScheme: 'light' }}
                   value={localFilters.filterExactDate}
                   onChange={(e) => handleUpdateLocalFilter('filterExactDate', e.target.value)}
                 />
@@ -315,7 +321,7 @@ export default function FilterModal({
                   <input
                     type="date"
                     className="form-input"
-                    style={{ colorScheme: 'dark' }}
+                    style={{ colorScheme: 'light' }}
                     value={localFilters.filterAfterDate}
                     onChange={(e) => handleUpdateLocalFilter('filterAfterDate', e.target.value)}
                   />
@@ -326,7 +332,7 @@ export default function FilterModal({
                   <input
                     type="date"
                     className="form-input"
-                    style={{ colorScheme: 'dark' }}
+                    style={{ colorScheme: 'light' }}
                     value={localFilters.filterBeforeDate}
                     onChange={(e) => handleUpdateLocalFilter('filterBeforeDate', e.target.value)}
                   />

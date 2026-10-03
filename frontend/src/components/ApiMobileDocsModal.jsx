@@ -28,9 +28,9 @@ export default function ApiMobileDocsModal({ onClose }) {
             </p>
           </div>
 
-          <div style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: '14px', padding: '1rem' }}>
-            <h4 style={{ color: '#60a5fa', fontSize: '0.95rem', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Zap size={16} /> 480p Storage Optimization
+          <div style={{ background: '#fefce8', border: '1px solid #fde047', borderRadius: '14px', padding: '1rem' }}>
+            <h4 style={{ color: '#b45309', fontSize: '0.95rem', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Zap size={16} color="#d97706" /> 480p Storage Optimization
             </h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Images are compressed client-side to 480p WebP format (~60KB average file size), allowing up to <strong>15,000+ plant photos</strong> to fit inside standard free-tier cloud storage limits (Cloudinary / Supabase Free Tiers).

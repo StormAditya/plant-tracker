@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Check, Ruler } from 'lucide-react';
+import { Leaf, Check, Ruler, X } from 'lucide-react';
 import { plantApi } from '../api/plantApi';
 
 export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
@@ -45,10 +45,10 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
         {/* Header Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Leaf size={22} color="var(--emerald-light)" /> Confirm Plant Profile
+            <h2 style={{ fontSize: '1.35rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Leaf size={22} color="#047857" /> Confirm Plant Profile
             </h2>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+            <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.2rem' }}>
               Verify identified species and initial height measurement.
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
             style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             title="Close Modal"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
@@ -70,7 +70,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
           borderRadius: '16px',
           overflow: 'hidden',
           marginBottom: '1.25rem',
-          border: '1px solid var(--border-glow)'
+          border: '1px solid #e2e8f0'
         }}>
           <img
             src={data.imageUrl}
@@ -110,7 +110,7 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
             <label className="form-label">Initial Recorded Height & Unit</label>
             <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
               <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                <Ruler size={18} color="var(--text-dim)" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+                <Ruler size={18} color="#64748b" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
                 <input
                   type="number"
                   step="0.1"
