@@ -43,13 +43,13 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
       <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '580px' }}>
         
         {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Leaf size={22} color="#047857" /> Confirm Plant Profile
+            <h2 style={{ fontSize: '1.4rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800 }}>
+              <Leaf size={22} color="#047857" /> Review & Edit Plant Details
             </h2>
-            <p style={{ fontSize: '0.82rem', color: '#64748b', marginTop: '0.2rem' }}>
-              Verify identified species and initial height measurement.
+            <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
+              Gemini Vision AI scan completed. You can edit any details below before saving.
             </p>
           </div>
           <button
@@ -60,6 +60,22 @@ export default function SpeciesConfirmModal({ data, onSaveComplete, onClose }) {
           >
             <X size={18} />
           </button>
+        </div>
+
+        {/* AI Scan notice pill */}
+        <div style={{
+          background: '#ecfdf5',
+          border: '1px solid #a7f3d0',
+          borderRadius: '12px',
+          padding: '0.6rem 0.9rem',
+          marginBottom: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.82rem',
+          color: '#047857'
+        }}>
+          <span>✨ <strong>AI Scanned:</strong> Review the predicted species and measurements below. Feel free to edit anything before confirming.</span>
         </div>
 
         {/* Clean Plant Photo Preview */}

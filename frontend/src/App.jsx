@@ -606,6 +606,7 @@ export default function App() {
       {isUploadOpen && (
         <ImageUploader
           onIdentificationComplete={handleIdentificationComplete}
+          onManualSaveComplete={handlePlantSaved}
           onClose={() => setIsUploadOpen(false)}
         />
       )}
