@@ -6,9 +6,8 @@ import { plantApi } from '../api/plantApi';
 const DEFAULT_PLANT_IMAGE = 'https://images.unsplash.com/photo-1545241047-6083a3684587?w=500&auto=format&fit=crop';
 
 export default function ImageUploader({ onIdentificationComplete, onManualSaveComplete, onClose }) {
-  // Option 1: 'manual' (Direct Data Entry without scanning)
-  // Option 2: 'scan' (AI Vision Scan, then review & edit before confirming)
-  const [mode, setMode] = useState('manual');
+  // 'scan' (AI Vision Scan - Default on left) or 'manual' (Direct Data Entry on right)
+  const [mode, setMode] = useState('scan');
 
   // AI Scan state
   const [selectedFile, setSelectedFile] = useState(null);
@@ -64,7 +63,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
     }
   };
 
-  // Handle Manual Entry photo attachment
+  // Handle Manual Entry photo attachment (Compulsory)
   const handleManualPhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -72,8 +71,10 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
     try {
       const compressionResult = await compressImageTo480p(file);
       setManualPhotoPreview(compressionResult.previewUrl);
+      setManualError(null);
     } catch {
       setManualPhotoPreview(null);
+      setManualError('Failed to process photo. Please choose a valid image file.');
     }
   };
 
@@ -82,6 +83,12 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
     e.preventDefault();
     if (!manualSpeciesName.trim()) {
       setManualError('Please enter a plant species name.');
+      return;
+    }
+
+    // Photo is compulsory in manual entry
+    if (!manualPhotoPreview) {
+      setManualError('Plant photo is compulsory. Please choose or capture a photo.');
       return;
     }
 
@@ -94,7 +101,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
       height: parseFloat(manualHeight) || 0,
       currentHeight: parseFloat(manualHeight) || 0,
       heightUnit: manualHeightUnit,
-      imageUrl: manualPhotoPreview || DEFAULT_PLANT_IMAGE,
+      imageUrl: manualPhotoPreview,
       notes: manualNotes.trim(),
       isSpeciesConfirmed: true,
       engineUsed: 'Manual Entry'
@@ -145,7 +152,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
               Add Plant to Collection
             </h2>
             <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.2rem' }}>
-              Choose to enter plant data manually or scan a photo with Gemini AI.
+              Choose to scan a photo with Gemini AI or enter details manually.
             </p>
           </div>
           <button
@@ -158,7 +165,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
           </button>
         </div>
 
-        {/* Option Selector Toggle Tabs */}
+        {/* Option Selector Toggle Tabs (Scan with AI on left/default, Enter Manually on right) */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -168,33 +175,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
           borderRadius: '16px',
           marginBottom: '1.25rem'
         }}>
-          {/* Option 1: Enter Manually */}
-          <button
-            type="button"
-            id="tab-manual-entry"
-            onClick={() => setMode('manual')}
-            style={{
-              padding: '0.65rem 0.75rem',
-              borderRadius: '12px',
-              border: mode === 'manual' ? '1px solid rgba(230,149,0,0.3)' : '1px solid transparent',
-              background: mode === 'manual' ? '#ffffff' : 'transparent',
-              color: mode === 'manual' ? '#b45309' : '#64748b',
-              fontWeight: mode === 'manual' ? 700 : 600,
-              boxShadow: mode === 'manual' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.45rem',
-              fontSize: '0.88rem',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <Edit3 size={16} color={mode === 'manual' ? '#e69500' : 'currentColor'} />
-            <span>1. Enter Manually</span>
-          </button>
-
-          {/* Option 2: Scan with AI */}
+          {/* Scan with AI (Left / Default) */}
           <button
             type="button"
             id="tab-scan-ai"
@@ -217,218 +198,39 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
             }}
           >
             <Sparkles size={16} color={mode === 'scan' ? '#047857' : 'currentColor'} />
-            <span>2. Scan with AI</span>
+            <span>Scan with AI</span>
+          </button>
+
+          {/* Enter Manually (Right) */}
+          <button
+            type="button"
+            id="tab-manual-entry"
+            onClick={() => setMode('manual')}
+            style={{
+              padding: '0.65rem 0.75rem',
+              borderRadius: '12px',
+              border: mode === 'manual' ? '1px solid rgba(230,149,0,0.3)' : '1px solid transparent',
+              background: mode === 'manual' ? '#ffffff' : 'transparent',
+              color: mode === 'manual' ? '#b45309' : '#64748b',
+              fontWeight: mode === 'manual' ? 700 : 600,
+              boxShadow: mode === 'manual' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.45rem',
+              fontSize: '0.88rem',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Edit3 size={16} color={mode === 'manual' ? '#e69500' : 'currentColor'} />
+            <span>Enter Manually</span>
           </button>
         </div>
 
-        {/* OPTION 1: Enter Data Manually without Scanning */}
-        {mode === 'manual' ? (
-          <form onSubmit={handleManualSubmit}>
-            {/* Friendly guidance banner */}
-            <div style={{
-              background: '#fffbeb',
-              border: '1px solid #fde68a',
-              borderRadius: '12px',
-              padding: '0.65rem 0.9rem',
-              marginBottom: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.82rem',
-              color: '#92400e'
-            }}>
-              <span>✍️ <strong>Option 1:</strong> Enter plant details directly without starting an AI scan.</span>
-            </div>
-
-            {manualError && (
-              <div style={{
-                background: '#fef2f2',
-                border: '1px solid #fca5a5',
-                borderRadius: '12px',
-                padding: '0.75rem 1rem',
-                color: '#dc2626',
-                fontSize: '0.83rem',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <AlertCircle size={16} />
-                <span>{manualError}</span>
-              </div>
-            )}
-
-            <div className="form-group">
-              <label className="form-label">Plant Species Name *</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g. Neem Tree, Mango, Snake Plant..."
-                value={manualSpeciesName}
-                onChange={(e) => setManualSpeciesName(e.target.value)}
-                autoFocus
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Scientific Botanical Name (Optional)</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="e.g. Azadirachta indica, Mangifera indica..."
-                value={manualScientificName}
-                onChange={(e) => setManualScientificName(e.target.value)}
-              />
-            </div>
-
-            {/* Height & Unit */}
-            <div className="form-group">
-              <label className="form-label">Initial Recorded Height *</label>
-              <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
-                <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                  <Ruler size={18} color="#64748b" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
-                  <input
-                    type="number"
-                    step="0.1"
-                    className="form-input"
-                    style={{ paddingLeft: '2.5rem', width: '100%' }}
-                    placeholder="Height value"
-                    value={manualHeight}
-                    onChange={(e) => setManualHeight(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <select
-                  className="form-select form-select-unit"
-                  value={manualHeightUnit}
-                  onChange={(e) => setManualHeightUnit(e.target.value)}
-                >
-                  <option value="cm">cm</option>
-                  <option value="ft">ft</option>
-                  <option value="inches">in</option>
-                  <option value="m">m</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Optional Photo Attachment */}
-            <div className="form-group">
-              <label className="form-label">Plant Photo (Optional)</label>
-              <input
-                ref={manualFileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleManualPhotoChange}
-              />
-
-              {manualPhotoPreview ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.5rem', borderRadius: '12px' }}>
-                  <img
-                    src={manualPhotoPreview}
-                    alt="Preview"
-                    style={{ width: '56px', height: '56px', borderRadius: '8px', objectFit: 'cover' }}
-                  />
-                  <span style={{ fontSize: '0.82rem', color: '#047857', fontWeight: 600, flex: 1 }}>
-                    Photo attached
-                  </span>
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={() => setManualPhotoPreview(null)}
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => manualFileInputRef.current?.click()}
-                  style={{ width: '100%', justifyContent: 'center', gap: '0.5rem', padding: '0.65rem' }}
-                >
-                  <Image size={16} /> Choose Photo (Optional)
-                </button>
-              )}
-            </div>
-
-            {/* Notes / Care tips */}
-            <div className="form-group">
-              <label className="form-label">Notes / Location Details</label>
-              <textarea
-                className="form-input form-textarea"
-                rows="2"
-                placeholder="e.g. Planted near east gate, watered twice weekly..."
-                value={manualNotes}
-                onChange={(e) => setManualNotes(e.target.value)}
-              />
-            </div>
-
-            {/* Form Actions */}
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={onClose}
-                disabled={isManualSubmitting}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={isManualSubmitting}
-                style={{
-                  background: 'linear-gradient(135deg, #ffca28 0%, #ffb300 50%, #e69500 100%)',
-                  color: '#0f172a',
-                  fontWeight: 800
-                }}
-              >
-                <Check size={18} /> {isManualSubmitting ? 'Saving Plant...' : 'Save to Collection'}
-              </button>
-            </div>
-
-            {/* Switch to scan option helper */}
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button
-                type="button"
-                onClick={() => setMode('scan')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#047857',
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  textDecoration: 'underline'
-                }}
-              >
-                Prefer to scan a plant photo with Gemini AI instead? Switch to AI Scan →
-              </button>
-            </div>
-          </form>
-        ) : (
-          /* OPTION 2: Scan with AI */
+        {/* VIEW 1: Scan with AI (Default on Left) */}
+        {mode === 'scan' ? (
           <div>
-            {/* Friendly guidance banner */}
-            <div style={{
-              background: '#ecfdf5',
-              border: '1px solid #a7f3d0',
-              borderRadius: '12px',
-              padding: '0.65rem 0.9rem',
-              marginBottom: '1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.82rem',
-              color: '#047857'
-            }}>
-              <span>📸 <strong>Option 2:</strong> Scan plant photo with Gemini AI. You can review & edit all details before confirming.</span>
-            </div>
-
             <div
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
@@ -554,6 +356,186 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
               </button>
             </div>
           </div>
+        ) : (
+          /* VIEW 2: Enter Data Manually without Scanning */
+          <form onSubmit={handleManualSubmit}>
+            {manualError && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1px solid #fca5a5',
+                borderRadius: '12px',
+                padding: '0.75rem 1rem',
+                color: '#dc2626',
+                fontSize: '0.83rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <AlertCircle size={16} />
+                <span>{manualError}</span>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label className="form-label">Plant Species Name *</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. Neem Tree, Mango, Snake Plant..."
+                value={manualSpeciesName}
+                onChange={(e) => setManualSpeciesName(e.target.value)}
+                autoFocus
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Scientific Botanical Name (Optional)</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. Azadirachta indica, Mangifera indica..."
+                value={manualScientificName}
+                onChange={(e) => setManualScientificName(e.target.value)}
+              />
+            </div>
+
+            {/* Height & Unit */}
+            <div className="form-group">
+              <label className="form-label">Initial Recorded Height *</label>
+              <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
+                <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+                  <Ruler size={18} color="#64748b" style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="form-input"
+                    style={{ paddingLeft: '2.5rem', width: '100%' }}
+                    placeholder="Height value"
+                    value={manualHeight}
+                    onChange={(e) => setManualHeight(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <select
+                  className="form-select form-select-unit"
+                  value={manualHeightUnit}
+                  onChange={(e) => setManualHeightUnit(e.target.value)}
+                >
+                  <option value="cm">cm</option>
+                  <option value="ft">ft</option>
+                  <option value="inches">in</option>
+                  <option value="m">m</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Compulsory Photo Attachment */}
+            <div className="form-group">
+              <label className="form-label">Plant Photo * (Compulsory)</label>
+              <input
+                ref={manualFileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleManualPhotoChange}
+              />
+
+              {manualPhotoPreview ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#f8fafc', border: '1px solid #10b981', padding: '0.5rem', borderRadius: '12px' }}>
+                  <img
+                    src={manualPhotoPreview}
+                    alt="Preview"
+                    style={{ width: '56px', height: '56px', borderRadius: '8px', objectFit: 'cover' }}
+                  />
+                  <span style={{ fontSize: '0.82rem', color: '#047857', fontWeight: 600, flex: 1 }}>
+                    ✓ Photo attached
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setManualPhotoPreview(null)}
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
+                  >
+                    Change Photo
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => manualFileInputRef.current?.click()}
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    border: '1.5px dashed #cbd5e1',
+                    background: '#f8fafc'
+                  }}
+                >
+                  <Image size={18} color="#047857" /> Choose Plant Photo * (Compulsory)
+                </button>
+              )}
+            </div>
+
+            {/* Notes / Care tips */}
+            <div className="form-group">
+              <label className="form-label">Notes / Location Details</label>
+              <textarea
+                className="form-input form-textarea"
+                rows="2"
+                placeholder="e.g. Planted near east gate, watered twice weekly..."
+                value={manualNotes}
+                onChange={(e) => setManualNotes(e.target.value)}
+              />
+            </div>
+
+            {/* Form Actions */}
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={onClose}
+                disabled={isManualSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={isManualSubmitting}
+                style={{
+                  background: 'linear-gradient(135deg, #ffca28 0%, #ffb300 50%, #e69500 100%)',
+                  color: '#0f172a',
+                  fontWeight: 800
+                }}
+              >
+                <Check size={18} /> {isManualSubmitting ? 'Saving Plant...' : 'Save to Collection'}
+              </button>
+            </div>
+
+            {/* Switch to scan option helper */}
+            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+              <button
+                type="button"
+                onClick={() => setMode('scan')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#047857',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  textDecoration: 'underline'
+                }}
+              >
+                Prefer to scan a plant photo with Gemini AI instead? Switch to AI Scan →
+              </button>
+            </div>
+          </form>
         )}
 
       </div>
