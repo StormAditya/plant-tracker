@@ -7,9 +7,8 @@ import AddHeightModal from './components/AddHeightModal';
 import PlantDetailModal from './components/PlantDetailModal';
 import FilterModal from './components/FilterModal';
 import CustomSortDropdown from './components/CustomSortDropdown';
-import LoginModal from './components/LoginModal';
 import { plantApi } from './api/plantApi';
-import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Filter, X, Heart, Lock } from 'lucide-react';
+import { Leaf, Sparkles, Plus, Search, RefreshCw, AlertCircle, Filter, X, Heart } from 'lucide-react';
 
 export default function App() {
   const [plants, setPlants] = useState([]);
@@ -17,17 +16,6 @@ export default function App() {
   const [error, setError] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
-
-  // Admin Authentication State (Single Admin: RSWF / RSWFPASS)
-  const [auth, setAuth] = useState(() => plantApi.getAuth());
-  const isAdmin = Boolean(auth?.token && auth?.role === 'admin');
-
-  // Login Modal State: Always opens first if the user is logged out when visiting/refreshing the site
-  const [isLoginOpen, setIsLoginOpen] = useState(() => {
-    const current = plantApi.getAuth();
-    // If not logged in as admin, show login dialog first
-    return !Boolean(current?.token && current?.role === 'admin');
-  });
 
   // Advanced Filter State
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -49,8 +37,6 @@ export default function App() {
 
   // Fetch plants on mount
   useEffect(() => {
-    // Clear any previous persistent dismissal flag so login dialog always appears when logged out
-    localStorage.removeItem('rswf_guest_dismissed');
     loadPlants();
 
     const handleScroll = () => {
@@ -77,40 +63,6 @@ export default function App() {
       setError('Could not connect to backend server.');
       setIsLoading(false);
     }
-  };
-
-  const handleLoginSuccess = () => {
-    const currentAuth = plantApi.getAuth();
-    setAuth(currentAuth);
-    setIsLoginOpen(false);
-  };
-
-  const handleContinueAsGuest = () => {
-    // Continue viewing plants as guest for the current session
-    setIsLoginOpen(false);
-  };
-
-  const handleLogout = () => {
-    plantApi.logout();
-    setAuth(null);
-    // When logged out, reopen the login modal first so user can choose to log in again or continue as guest
-    setIsLoginOpen(true);
-  };
-
-  const handleOpenUpload = () => {
-    if (!isAdmin) {
-      setIsLoginOpen(true);
-      return;
-    }
-    setIsUploadOpen(true);
-  };
-
-  const handleRequestAddHeight = (plant) => {
-    if (!isAdmin) {
-      setIsLoginOpen(true);
-      return;
-    }
-    setAddHeightPlant(plant);
   };
 
   const handleUpdateFilter = (key, value) => {
@@ -155,7 +107,7 @@ export default function App() {
     if (plantObj && plantObj.id) {
       setPlants((prev) => [plantObj, ...prev.filter((p) => p.id !== plantObj.id)]);
     }
-    loadPlants();
+    loadPlants(); // Background sync to guarantee full details instantly
   };
 
   // Callback when new height log is saved
@@ -168,93 +120,84 @@ export default function App() {
         setSelectedPlant(plantObj);
       }
     }
+    loadPlants(); // Background sync
   };
 
-  // Callback when plant details are updated
-  const handleUpdatePlant = async (id, payload) => {
-    if (!isAdmin) {
-      setIsLoginOpen(true);
-      return;
-    }
+  // Callback for editing plant details
+  const handleUpdatePlant = async (id, updateFields) => {
     try {
-      const updated = await plantApi.updatePlant(id, payload);
+      const updated = await plantApi.updatePlant(id, updateFields);
       const plantObj = updated?.plant || updated;
       if (plantObj && plantObj.id) {
-        setPlants((prev) => prev.map((p) => (p.id === plantObj.id ? plantObj : p)));
-        setSelectedPlant(plantObj);
+        setPlants((prev) => prev.map((p) => (p.id === id ? plantObj : p)));
+        if (selectedPlant?.id === id) {
+          setSelectedPlant(plantObj);
+        }
       }
+      loadPlants();
     } catch (err) {
-      console.error('Failed to update plant:', err);
-      alert('Could not update plant: Admin authorization required.');
+      alert('Failed to update plant details');
     }
   };
 
-  // Callback when plant is deleted
+  // Callback for deleting plant (called after custom ConfirmDialogModal confirmation)
   const handleDeletePlant = async (id) => {
-    if (!isAdmin) {
-      setIsLoginOpen(true);
-      return;
-    }
     try {
       await plantApi.deletePlant(id);
       setPlants((prev) => prev.filter((p) => p.id !== id));
-      if (selectedPlant?.id === id) {
-        setSelectedPlant(null);
-      }
+      if (selectedPlant?.id === id) setSelectedPlant(null);
     } catch (err) {
-      console.error('Failed to delete plant:', err);
-      alert('Could not delete plant: Admin authorization required.');
+      alert('Failed to delete plant');
     }
   };
 
-  // Filter & Sort plants
-  const sortedAndFilteredPlants = plants
+  // Filtered & Sorted plants
+  const sortedAndFilteredPlants = [...plants]
     .filter((plant) => {
-      // 1. Text Search query
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesName = plant.speciesName?.toLowerCase().includes(query);
-        const matchesSci = plant.scientificName?.toLowerCase().includes(query);
-        const matchesNotes = plant.notes?.toLowerCase().includes(query);
-        if (!matchesName && !matchesSci && !matchesNotes) return false;
+      // 1. Text Search Query
+      const q = searchQuery.toLowerCase().trim();
+      if (q) {
+        const matchesText =
+          (plant.speciesName && plant.speciesName.toLowerCase().includes(q)) ||
+          (plant.scientificName && plant.scientificName.toLowerCase().includes(q)) ||
+          (plant.notes && plant.notes.toLowerCase().includes(q));
+        if (!matchesText) return false;
       }
 
-      const plantHeight = parseFloat(plant.currentHeight);
-      const plantDate = new Date(plant.updatedAt || plant.createdAt);
+      const currentH = parseFloat(plant.currentHeight) || 0;
+      const plantDate = new Date(plant.updatedAt || plant.createdAt || Date.now());
+      plantDate.setHours(0, 0, 0, 0);
 
       // 2. Exact Height
-      if (filters.filterExactHeight) {
-        const targetExact = parseFloat(filters.filterExactHeight);
-        if (Math.abs(plantHeight - targetExact) > 0.05) return false;
+      if (filters.filterExactHeight !== '' && !isNaN(parseFloat(filters.filterExactHeight))) {
+        if (Math.abs(currentH - parseFloat(filters.filterExactHeight)) > 0.1) return false;
       }
 
-      // 3. Min Height
-      if (filters.filterMinHeight) {
-        const minVal = parseFloat(filters.filterMinHeight);
-        if (plantHeight <= minVal) return false;
+      // 3. Min Height (Larger than)
+      if (filters.filterMinHeight !== '' && !isNaN(parseFloat(filters.filterMinHeight))) {
+        if (currentH < parseFloat(filters.filterMinHeight)) return false;
       }
 
-      // 4. Max Height
-      if (filters.filterMaxHeight) {
-        const maxVal = parseFloat(filters.filterMaxHeight);
-        if (plantHeight >= maxVal) return false;
+      // 4. Max Height (Smaller than)
+      if (filters.filterMaxHeight !== '' && !isNaN(parseFloat(filters.filterMaxHeight))) {
+        if (currentH > parseFloat(filters.filterMaxHeight)) return false;
       }
 
       // 5. Exact Date
       if (filters.filterExactDate) {
-        const filterDateStr = filters.filterExactDate;
-        const plantDateStr = plantDate.toISOString().split('T')[0];
-        if (plantDateStr !== filterDateStr) return false;
+        const targetDate = new Date(filters.filterExactDate);
+        targetDate.setHours(0, 0, 0, 0);
+        if (plantDate.getTime() !== targetDate.getTime()) return false;
       }
 
-      // 6. Before Date
+      // 6. Before Date (To)
       if (filters.filterBeforeDate) {
         const beforeDate = new Date(filters.filterBeforeDate);
         beforeDate.setHours(23, 59, 59, 999);
         if (plantDate.getTime() > beforeDate.getTime()) return false;
       }
 
-      // 7. After Date
+      // 7. After Date (From)
       if (filters.filterAfterDate) {
         const afterDate = new Date(filters.filterAfterDate);
         afterDate.setHours(0, 0, 0, 0);
@@ -307,17 +250,13 @@ export default function App() {
         </div>
       </div>
 
-      {/* Header with RSWF Logo and Auth Controls */}
-      <Header
-        isAdmin={isAdmin}
-        onOpenLogin={() => setIsLoginOpen(true)}
-        onLogout={handleLogout}
-      />
+      {/* Minimalist Header */}
+      <Header />
 
       {/* Main Container */}
       <main style={{ maxWidth: '1400px', width: '100%', margin: '0 auto', flex: 1 }}>
 
-        {/* Search, Filter & Action Bar */}
+        {/* Search, Filter & Sort Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.75rem', flexWrap: 'wrap' }}>
           
           {/* Text Search Input */}
@@ -327,7 +266,7 @@ export default function App() {
               type="text"
               className="form-input"
               style={{ paddingLeft: '2.75rem', width: '100%' }}
-              placeholder="Search plants by name, scientific name or notes..."
+              placeholder="Search plants..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -340,14 +279,14 @@ export default function App() {
             <button
               className="btn-secondary"
               onClick={() => setIsFilterOpen(true)}
-              style={{ position: 'relative', height: '46px', border: activeFilterCount > 0 ? '1px solid #10b981' : undefined }}
+              style={{ position: 'relative', height: '46px', border: activeFilterCount > 0 ? '1px solid var(--emerald-primary)' : undefined }}
               title="Open Advanced Filters"
             >
-              <Filter size={16} color={activeFilterCount > 0 ? '#047857' : 'currentColor'} /> Filters
+              <Filter size={16} color={activeFilterCount > 0 ? 'var(--emerald-light)' : 'currentColor'} /> Filters
               {activeFilterCount > 0 && (
                 <span style={{
-                  background: '#10b981',
-                  color: '#ffffff',
+                  background: 'var(--emerald-primary)',
+                  color: '#04120a',
                   fontSize: '0.7rem',
                   fontWeight: 800,
                   borderRadius: '50%',
@@ -363,7 +302,7 @@ export default function App() {
               )}
             </button>
 
-            {/* Custom Sort Dropdown */}
+            {/* Custom Glassmorphic Sort Dropdown */}
             <CustomSortDropdown value={sortBy} onChange={setSortBy} />
 
           </div>
@@ -373,24 +312,9 @@ export default function App() {
             <button className="btn-secondary" onClick={loadPlants} title="Refresh plant data">
               <RefreshCw size={16} className={isLoading ? 'spin' : ''} /> Refresh
             </button>
-            {isAdmin ? (
-              <button className="btn-primary" onClick={handleOpenUpload}>
-                <Plus size={18} /> Identify & Add Plant
-              </button>
-            ) : (
-              <button
-                className="btn-primary"
-                onClick={() => setIsLoginOpen(true)}
-                style={{
-                  background: 'linear-gradient(135deg, #ffca28 0%, #ffb300 50%, #e69500 100%)',
-                  color: '#0f172a',
-                  fontWeight: 800
-                }}
-                title="Log in as admin to add new plants"
-              >
-                <Lock size={16} /> Admin Login to Add Plants
-              </button>
-            )}
+            <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
+              <Plus size={18} /> Identify & Add Plant
+            </button>
           </div>
 
         </div>
@@ -439,7 +363,7 @@ export default function App() {
 
             <button
               onClick={handleResetFilters}
-              style={{ background: 'none', border: 'none', color: '#b45309', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', fontSize: '0.78rem', cursor: 'pointer', textDecoration: 'underline' }}
             >
               Clear All
             </button>
@@ -473,7 +397,7 @@ export default function App() {
         {/* Loading State */}
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '5rem 0' }}>
-            <RefreshCw size={40} color="#047857" style={{ animation: 'spin 1s linear infinite' }} />
+            <RefreshCw size={40} color="var(--emerald-primary)" style={{ animation: 'spin 1s linear infinite' }} />
             <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>Loading plant database...</p>
           </div>
         ) : sortedAndFilteredPlants.length === 0 ? (
@@ -488,21 +412,15 @@ export default function App() {
             <p style={{ color: 'var(--text-muted)', maxWidth: '460px', margin: '0 auto 1.5rem auto', fontSize: '0.9rem' }}>
               {activeFilterCount > 0
                 ? 'Try resetting date and height filters or adjusting search keywords.'
-                : isAdmin
-                ? 'Upload a plant photo to automatically identify species, confirm predictions, and start logging plant height over time!'
-                : 'Browse plants in the collection. Log in as RSWF Admin to upload photos and add new plants.'}
+                : 'Upload a plant photo to automatically identify species, confirm predictions, and start logging plant height over time!'}
             </p>
             {activeFilterCount > 0 ? (
               <button className="btn-secondary" onClick={handleResetFilters}>
                 Clear Active Filters
               </button>
-            ) : isAdmin ? (
-              <button className="btn-primary" onClick={handleOpenUpload}>
-                <Sparkles size={18} /> Identify First Plant
-              </button>
             ) : (
-              <button className="btn-primary" onClick={() => setIsLoginOpen(true)}>
-                <Lock size={18} /> Admin Login to Add Plants
+              <button className="btn-primary" onClick={() => setIsUploadOpen(true)}>
+                <Sparkles size={18} /> Identify First Plant
               </button>
             )}
           </div>
@@ -513,9 +431,8 @@ export default function App() {
               <PlantCard
                 key={plant.id}
                 plant={plant}
-                isAdmin={isAdmin}
                 onSelect={setSelectedPlant}
-                onAddHeight={handleRequestAddHeight}
+                onAddHeight={setAddHeightPlant}
                 onDelete={handleDeletePlant}
               />
             ))}
@@ -524,7 +441,7 @@ export default function App() {
 
       </main>
 
-      {/* Footer pinned at bottom */}
+      {/* Footer pinned at very bottom (matching Header width) */}
       <footer style={{
         marginTop: 'auto',
         width: '100%',
@@ -563,37 +480,17 @@ export default function App() {
           <RefreshCw size={20} className={isLoading ? 'spin' : ''} />
         </button>
 
-        {isAdmin ? (
-          <button
-            className="floating-btn primary-fab"
-            onClick={handleOpenUpload}
-            title="Identify & Add Plant"
-          >
-            <Plus size={24} />
-            <span className="fab-text">Add Plant</span>
-          </button>
-        ) : (
-          <button
-            className="floating-btn primary-fab"
-            onClick={() => setIsLoginOpen(true)}
-            title="Admin Login to Add Plants"
-          >
-            <Lock size={20} />
-            <span className="fab-text">Admin Login</span>
-          </button>
-        )}
+        <button
+          className="floating-btn primary-fab"
+          onClick={() => setIsUploadOpen(true)}
+          title="Identify & Add Plant"
+        >
+          <Plus size={24} />
+          <span className="fab-text">Add Plant</span>
+        </button>
       </div>
 
       {/* Modals */}
-      {isLoginOpen && (
-        <LoginModal
-          onLoginSuccess={handleLoginSuccess}
-          onContinueAsGuest={handleContinueAsGuest}
-          onClose={() => setIsLoginOpen(false)}
-          canDismiss={true}
-        />
-      )}
-
       {isFilterOpen && (
         <FilterModal
           filters={filters}
@@ -629,12 +526,10 @@ export default function App() {
       {selectedPlant && (
         <PlantDetailModal
           plant={selectedPlant}
-          isAdmin={isAdmin}
-          onAddHeight={handleRequestAddHeight}
+          onAddHeight={setAddHeightPlant}
           onUpdatePlant={handleUpdatePlant}
           onDelete={handleDeletePlant}
           onClose={() => setSelectedPlant(null)}
-          onOpenLogin={() => setIsLoginOpen(true)}
         />
       )}
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Ruler, Calendar, TrendingUp, Plus, Trash2, Eye } from 'lucide-react';
 import ConfirmDialogModal from './ConfirmDialogModal';
 
-export default function PlantCard({ plant, isAdmin, onSelect, onAddHeight, onDelete }) {
+export default function PlantCard({ plant, onSelect, onAddHeight, onDelete }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const historyCount = plant.heightHistory?.length || 1;
@@ -97,40 +97,20 @@ export default function PlantCard({ plant, isAdmin, onSelect, onAddHeight, onDel
           </span>
         </div>
 
-        {/* Action Controls - Restricted based on Admin role */}
-        {isAdmin ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr 40px', gap: '0.5rem' }}>
-            <button className="btn-secondary" onClick={() => onSelect(plant)} style={{ padding: '0.5rem 0.6rem', fontSize: '0.82rem', justifyContent: 'center', minHeight: '38px' }}>
-              <Eye size={14} /> Details
-            </button>
-            
-            <button className="btn-primary" onClick={() => onAddHeight(plant)} style={{ padding: '0.5rem 0.6rem', fontSize: '0.82rem', justifyContent: 'center', minHeight: '38px' }}>
-              <Plus size={14} /> Log Height
-            </button>
+        {/* Action Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.15fr 40px', gap: '0.5rem' }}>
+          <button className="btn-secondary" onClick={() => onSelect(plant)} style={{ padding: '0.5rem 0.6rem', fontSize: '0.82rem', justifyContent: 'center', minHeight: '38px' }}>
+            <Eye size={14} /> Details
+          </button>
+          
+          <button className="btn-primary" onClick={() => onAddHeight(plant)} style={{ padding: '0.5rem 0.6rem', fontSize: '0.82rem', justifyContent: 'center', minHeight: '38px' }}>
+            <Plus size={14} /> Log Height
+          </button>
 
-            <button className="btn-danger" onClick={() => setShowDeleteConfirm(true)} style={{ padding: '0.5rem', justifyContent: 'center', minHeight: '38px' }} title="Delete plant">
-              <Trash2 size={14} />
-            </button>
-          </div>
-        ) : (
-          <div>
-            <button
-              className="btn-secondary"
-              onClick={() => onSelect(plant)}
-              style={{
-                width: '100%',
-                padding: '0.55rem',
-                fontSize: '0.85rem',
-                justifyContent: 'center',
-                minHeight: '38px',
-                fontWeight: 700,
-                color: '#0f172a'
-              }}
-            >
-              <Eye size={15} /> View Details & Growth
-            </button>
-          </div>
-        )}
+          <button className="btn-danger" onClick={() => setShowDeleteConfirm(true)} style={{ padding: '0.5rem', justifyContent: 'center', minHeight: '38px' }} title="Delete plant">
+            <Trash2 size={14} />
+          </button>
+        </div>
 
       </div>
 

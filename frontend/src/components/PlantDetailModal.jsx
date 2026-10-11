@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Ruler, Plus, Edit3, Trash2, Activity, Maximize2, X, Lock } from 'lucide-react';
+import { Ruler, Plus, Edit3, Trash2, Activity, Maximize2, X } from 'lucide-react';
 import GrowthChart from './GrowthChart';
 import ImageLightboxModal from './ImageLightboxModal';
 import ConfirmDialogModal from './ConfirmDialogModal';
 
-export default function PlantDetailModal({ plant, isAdmin, onAddHeight, onUpdatePlant, onDelete, onClose, onOpenLogin }) {
+export default function PlantDetailModal({ plant, onAddHeight, onUpdatePlant, onDelete, onClose }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showLightbox, setShowLightbox] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -99,22 +99,20 @@ export default function PlantDetailModal({ plant, isAdmin, onAddHeight, onUpdate
                     )}
                   </div>
 
-                  {/* Action Controls: Edit & Delete Buttons (Admin only) */}
-                  {isAdmin && (
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="btn-secondary" onClick={() => setIsEditing(true)} style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}>
-                        <Edit3 size={14} /> Edit
-                      </button>
-                      <button
-                        className="btn-danger"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
-                        title="Delete Plant Record"
-                      >
-                        <Trash2 size={14} /> Delete
-                      </button>
-                    </div>
-                  )}
+                  {/* Action Controls: Edit & Delete Buttons */}
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn-secondary" onClick={() => setIsEditing(true)} style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}>
+                      <Edit3 size={14} /> Edit
+                    </button>
+                    <button
+                      className="btn-danger"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      style={{ padding: '0.35rem 0.7rem', fontSize: '0.8rem' }}
+                      title="Delete Plant Record"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </div>
                 </div>
 
                 {/* Recorded Height Box */}
@@ -135,17 +133,15 @@ export default function PlantDetailModal({ plant, isAdmin, onAddHeight, onUpdate
                     </div>
                   </div>
                   
-                  {/* Icon-Only (+) Button for Adding Height Log (Admin only) */}
-                  {isAdmin && (
-                    <button
-                      className="btn-primary"
-                      onClick={() => { onClose(); onAddHeight(plant); }}
-                      style={{ width: '44px', height: '44px', minHeight: '44px', padding: 0, borderRadius: '14px' }}
-                      title="Log New Height"
-                    >
-                      <Plus size={22} />
-                    </button>
-                  )}
+                  {/* Icon-Only (+) Button for Adding Height Log */}
+                  <button
+                    className="btn-primary"
+                    onClick={() => { onClose(); onAddHeight(plant); }}
+                    style={{ width: '44px', height: '44px', minHeight: '44px', padding: 0, borderRadius: '14px' }}
+                    title="Log New Height"
+                  >
+                    <Plus size={22} />
+                  </button>
                 </div>
 
                 {/* Notes Box */}
@@ -237,37 +233,6 @@ export default function PlantDetailModal({ plant, isAdmin, onAddHeight, onUpdate
             ))}
           </div>
         </div>
-
-        {/* Guest View Notice banner */}
-        {!isAdmin && (
-          <div style={{
-            marginTop: '1.25rem',
-            padding: '0.85rem 1rem',
-            background: '#fffde7',
-            border: '1px solid #fde047',
-            borderRadius: '14px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '0.5rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.82rem', color: '#b45309' }}>
-              <Lock size={15} style={{ flexShrink: 0 }} />
-              <span>You are viewing in <strong>Guest Mode</strong>. RSWF Admin login is required to edit details or record height logs.</span>
-            </div>
-            {onOpenLogin && (
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => { onClose(); onOpenLogin(); }}
-                style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', minHeight: '34px', borderColor: '#fde047', color: '#b45309', fontWeight: 700, borderRadius: '10px' }}
-              >
-                Login as Admin
-              </button>
-            )}
-          </div>
-        )}
 
       </div>
 
