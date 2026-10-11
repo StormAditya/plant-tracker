@@ -20,8 +20,10 @@ router.get('/auth/verify', authController.verify);
 router.get('/plants', plantController.getAll);
 router.get('/plants/:id', plantController.getById);
 
-// Protected Admin Routes (Only RSWF admin can identify, add, edit, or delete plants)
-router.post('/identify', requireAdmin, upload.single('image'), plantController.identify);
+// Scanning / Plant Identification
+router.post('/identify', upload.single('image'), plantController.identify);
+
+// Protected Admin Mutation Routes (Only RSWF admin can add, edit, or delete plants)
 router.post('/plants', requireAdmin, plantController.create);
 router.put('/plants/:id', requireAdmin, plantController.update);
 router.post('/plants/:id/height', requireAdmin, plantController.addHeightLog);
