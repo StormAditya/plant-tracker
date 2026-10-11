@@ -113,7 +113,7 @@ export default function LoginModal({ onLoginSuccess, onContinueAsGuest, onClose,
                 type="text"
                 className="form-input"
                 style={{ paddingLeft: '2.5rem' }}
-                placeholder="Enter username (RSWF)"
+                placeholder="Enter username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoFocus
@@ -130,7 +130,7 @@ export default function LoginModal({ onLoginSuccess, onContinueAsGuest, onClose,
                 type={showPassword ? 'text' : 'password'}
                 className="form-input"
                 style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}
-                placeholder="Enter password (RSWFPASS)"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
