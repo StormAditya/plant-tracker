@@ -63,7 +63,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
     }
   };
 
-  // Handle Manual Entry photo attachment (Compulsory)
+  // Handle Manual Entry photo attachment
   const handleManualPhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -86,9 +86,9 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
       return;
     }
 
-    // Photo is compulsory in manual entry
+    // Plant photo is required
     if (!manualPhotoPreview) {
-      setManualError('Plant photo is compulsory. Please choose or capture a photo.');
+      setManualError('Please upload or choose a plant photo.');
       return;
     }
 
@@ -432,9 +432,9 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
               </div>
             </div>
 
-            {/* Compulsory Photo Attachment */}
+            {/* Plant Photo Attachment */}
             <div className="form-group">
-              <label className="form-label">Plant Photo * (Compulsory)</label>
+              <label className="form-label">Plant Photo *</label>
               <input
                 ref={manualFileInputRef}
                 type="file"
@@ -476,7 +476,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                     background: '#f8fafc'
                   }}
                 >
-                  <Image size={18} color="#047857" /> Choose Plant Photo * (Compulsory)
+                  <Image size={18} color="#047857" /> Choose Plant Photo
                 </button>
               )}
             </div>
