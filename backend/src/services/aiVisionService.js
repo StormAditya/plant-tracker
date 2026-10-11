@@ -13,7 +13,7 @@ async function identifyPlantSpecies(imageBuffer, mimeType, originalFilename) {
     throw new Error('GEMINI_API_KEY is missing or unconfigured. Please configure a valid Gemini API key.');
   }
 
-  const modelCandidates = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+  const modelCandidates = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
   let lastErrorMsg = '';
 
   for (const modelName of modelCandidates) {
