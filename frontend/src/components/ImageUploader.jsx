@@ -24,6 +24,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
   const [manualHeightUnit, setManualHeightUnit] = useState('cm');
   const [manualNotes, setManualNotes] = useState('');
   const [manualPhotoPreview, setManualPhotoPreview] = useState(null);
+  const [manualPhotoFile, setManualPhotoFile] = useState(null);
   const [isManualSubmitting, setIsManualSubmitting] = useState(false);
   const [manualError, setManualError] = useState(null);
   const manualFileInputRef = useRef(null);
@@ -70,9 +71,11 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
 
     try {
       const compressionResult = await compressImageTo480p(file);
+      setManualPhotoFile(compressionResult.compressedFile);
       setManualPhotoPreview(compressionResult.previewUrl);
       setManualError(null);
     } catch {
+      setManualPhotoFile(null);
       setManualPhotoPreview(null);
       setManualError('Failed to process photo. Please choose a valid image file.');
     }
@@ -95,13 +98,31 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
     setIsManualSubmitting(true);
     setManualError(null);
 
+    let finalImageUrl = manualPhotoPreview;
+
+    // Stream 480p image directly to Cloudinary CDN
+    if (manualPhotoFile) {
+      try {
+        const uploadResult = await plantApi.uploadPhoto(manualPhotoFile);
+        if (uploadResult && uploadResult.imageUrl) {
+          finalImageUrl = uploadResult.imageUrl;
+          console.log('✅ Photo successfully uploaded to Cloudinary CDN:', finalImageUrl);
+        }
+      } catch (uploadErr) {
+        console.error('Error uploading photo to Cloudinary:', uploadErr);
+        setIsManualSubmitting(false);
+        setManualError(uploadErr.message || 'Failed to upload photo to Cloudinary storage.');
+        return;
+      }
+    }
+
     const plantPayload = {
       speciesName: manualSpeciesName.trim(),
       scientificName: manualScientificName.trim(),
       height: parseFloat(manualHeight) || 0,
       currentHeight: parseFloat(manualHeight) || 0,
       heightUnit: manualHeightUnit,
-      imageUrl: manualPhotoPreview,
+      imageUrl: finalImageUrl,
       notes: manualNotes.trim(),
       isSpeciesConfirmed: true,
       engineUsed: 'Manual Entry'
@@ -434,7 +455,10 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                   <button
                     type="button"
                     className="btn-secondary"
-                    onClick={() => setManualPhotoPreview(null)}
+                    onClick={() => {
+                      setManualPhotoPreview(null);
+                      setManualPhotoFile(null);
+                    }}
                     style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
                   >
                     Change Photo
@@ -491,7 +515,7 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                   fontWeight: 800
                 }}
               >
-                <Check size={18} /> {isManualSubmitting ? 'Saving Plant...' : 'Save to Collection'}
+                <Check size={18} /> {isManualSubmitting ? 'Uploading & Saving...' : 'Save to Collection'}
               </button>
             </div>
           </form>

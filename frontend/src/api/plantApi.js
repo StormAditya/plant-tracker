@@ -121,6 +121,25 @@ export const plantApi = {
     return data.plant;
   },
 
+  // Upload photo directly to Cloudinary (Admin only)
+  async uploadPhoto(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`${BASE_URL}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ error: 'Upload failed' }));
+      throw new Error(err.error || 'Failed to upload photo to Cloudinary');
+    }
+
+    return await response.json();
+  },
+
   // Save new plant (Admin only)
   async savePlant(plantPayload) {
     const response = await fetch(`${BASE_URL}/plants`, {

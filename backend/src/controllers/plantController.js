@@ -61,6 +61,53 @@ const plantController = {
     }
   },
 
+  // Direct Photo Upload to Cloudinary (used by Manual Plant Entry)
+  async uploadPhoto(req, res) {
+    try {
+      if (!req.file || !req.file.buffer) {
+        return res.status(400).json({ error: 'No image file uploaded' });
+      }
+
+      const imageBuffer = req.file.buffer;
+      const originalFilename = req.file.originalname || `plant_manual_${Date.now()}.webp`;
+
+      let imageUrl = '';
+      const isCloudinaryEnabled = process.env.STORAGE_PROVIDER === 'cloudinary' || Boolean(process.env.CLOUDINARY_CLOUD_NAME);
+
+      if (isCloudinaryEnabled) {
+        try {
+          console.log('☁️ Streaming manual plant photo to Cloudinary CDN...');
+          const cloudResult = await uploadToCloudinary(imageBuffer, originalFilename);
+          imageUrl = cloudResult.url;
+          console.log(`✅ Uploaded manual plant photo to Cloudinary: ${imageUrl}`);
+        } catch (cloudErr) {
+          console.error('⚠️ Cloudinary upload error:', cloudErr.message);
+        }
+      }
+
+      // Fallback local storage only if Cloudinary is unavailable
+      if (!imageUrl) {
+        const fs = require('fs');
+        const uploadsDir = path.join(__dirname, '../../uploads');
+        if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+        const filename = 'img_manual_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7) + '.webp';
+        const targetPath = path.join(uploadsDir, filename);
+        fs.writeFileSync(targetPath, imageBuffer);
+        imageUrl = `/uploads/${filename}`;
+        console.log(`💾 Saved fallback manual image to local uploads: ${imageUrl}`);
+      }
+
+      return res.json({
+        success: true,
+        imageUrl,
+        storageProvider: isCloudinaryEnabled && imageUrl.includes('cloudinary') ? 'Cloudinary CDN' : 'Local Storage'
+      });
+    } catch (err) {
+      console.error('Error during manual photo upload:', err);
+      return res.status(500).json({ error: 'Failed to upload photo', details: err.message });
+    }
+  },
+
   // Get all saved plants
   async getAll(req, res) {
     try {
@@ -106,6 +153,23 @@ const plantController = {
         return res.status(400).json({ error: 'Species name is required' });
       }
 
+      let finalImageUrl = imageUrl || '';
+
+      // If imageUrl is a base64 string, upload to Cloudinary directly
+      if (finalImageUrl && typeof finalImageUrl === 'string' && finalImageUrl.startsWith('data:image/')) {
+        try {
+          const matches = finalImageUrl.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+          if (matches && matches.length === 3) {
+            const buffer = Buffer.from(matches[2], 'base64');
+            const cloudResult = await uploadToCloudinary(buffer, `plant_manual_${Date.now()}`);
+            finalImageUrl = cloudResult.url;
+            console.log(`✅ Converted base64 imageUrl to Cloudinary CDN: ${finalImageUrl}`);
+          }
+        } catch (convErr) {
+          console.warn('⚠️ Could not convert base64 to Cloudinary:', convErr.message);
+        }
+      }
+
       const initialHeight = height !== undefined ? height : currentHeight;
       const initialUnit = heightUnit || unit || 'cm';
 
@@ -116,7 +180,7 @@ const plantController = {
         engineUsed,
         height: initialHeight || 0,
         heightUnit: initialUnit,
-        imageUrl,
+        imageUrl: finalImageUrl,
         notes: notes || '',
         careTips: careTips || '',
         loggedAt
