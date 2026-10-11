@@ -290,9 +290,6 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                     <p style={{ fontSize: '0.82rem', color: '#64748b' }}>
                       Drag & drop or <span style={{ color: '#047857', textDecoration: 'underline', fontWeight: 700 }}>browse file</span> (JPG, PNG, WebP)
                     </p>
-                    <p style={{ fontSize: '0.76rem', color: '#94a3b8', marginTop: '0.5rem' }}>
-                      ✨ You can review & edit all detected details before confirming.
-                    </p>
                   </div>
                 </div>
               )}
@@ -336,25 +333,6 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                 </div>
               </div>
             )}
-
-            {/* Switch to manual option helper */}
-            <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
-              <button
-                type="button"
-                onClick={() => setMode('manual')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#475569',
-                  fontSize: '0.83rem',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  textDecoration: 'underline'
-                }}
-              >
-                Prefer to enter details yourself without scanning? Switch to Manual Entry →
-              </button>
-            </div>
           </div>
         ) : (
           /* VIEW 2: Enter Data Manually without Scanning */
@@ -514,25 +492,6 @@ export default function ImageUploader({ onIdentificationComplete, onManualSaveCo
                 }}
               >
                 <Check size={18} /> {isManualSubmitting ? 'Saving Plant...' : 'Save to Collection'}
-              </button>
-            </div>
-
-            {/* Switch to scan option helper */}
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <button
-                type="button"
-                onClick={() => setMode('scan')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#047857',
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  textDecoration: 'underline'
-                }}
-              >
-                Prefer to scan a plant photo with Gemini AI instead? Switch to AI Scan →
               </button>
             </div>
           </form>
